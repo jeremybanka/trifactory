@@ -1,10 +1,9 @@
 module.exports = {
   root: true,
   extends: [
-    'plugin:react/recommended',
     'airbnb',
   ],
-  parser: '@typescript-eslint/parser',
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 12,
     ecmaFeatures: {
@@ -13,17 +12,23 @@ module.exports = {
     sourceType: 'module',
   },
   env: {
-    es6: true,
-    browser: true,
-    es2021: true,
-    worker: true,
+    'es6': true,
+    'worker': true,
+    'browser': true,
+    'jest': true,
   },
   plugins: [
-    'emotion',
-    '@typescript-eslint',
-    'react-hooks',
     'react',
+    'react-hooks',
+    'emotion'
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
   rules: {
     'arrow-parens': ['error', 'as-needed'],
     'comma-dangle': ['error', {
@@ -37,7 +42,6 @@ module.exports = {
     'curly': ['error', 'multi-line', 'consistent'],
     'function-paren-newline': 'off',
     'implicit-arrow-linebreak': 'off',
-    'padded-blocks': 'off',
     'jsx-quotes': 'off',
     'keyword-spacing': ['error', {
       'overrides': {
@@ -100,7 +104,6 @@ module.exports = {
         'enforceForRenamedProperties': false,
       },
     ],
-    'prefer-template': 'off',
     'prefer-object-spread': 'off',
     'quotes': 'off',
     'quote-props': ['error', 'as-needed', { 'unnecessary': false }],
@@ -114,12 +117,12 @@ module.exports = {
     'import/extensions': ['error', 'never'],
 
     // Begin React rules
+    "react/jsx-indent": ['error', 2, {checkAttributes: true, indentLogicalExpressions: true}],
     'react/destructuring-assignment': 'off',
     'react/jsx-closing-tag-location': 'off',
     'react/jsx-filename-extension': ['error', {
       'extensions': ['.js', '.jsx', '.tsx'],
     }],
-    'react/jsx-indent': 'off',
     'react/jsx-curly-newline': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'react/jsx-props-no-spreading': 'off',

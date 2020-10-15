@@ -163,9 +163,7 @@ function mutateColor(colorHSL, mutagens, settings) {
 
   // console.log(settings)
   const mutantHue = mutateHue(colorHSL.hue, mutagens.X, settings.hueMutability)
-  const filters = applyFilters(mutantHue, settings.role)
-  const { maxSaturation } = filters
-  const { lightnessBounds } = filters
+  const { maxSaturation, lightnessBounds } = applyFilters(mutantHue, settings.role)
   // console.log(maxSaturation)
 
   // console.log(colorHSL.saturation, mutagens.Y, maxSaturation)

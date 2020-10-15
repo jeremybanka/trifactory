@@ -1,38 +1,32 @@
 import { css } from '@emotion/core'
 
-const button = css`{
+const keyStyle = css`
   user-select: none;
   cursor: pointer;
-  --shading: #ddd;
-  --applied: #555;
-  color: var(--applied);
-  background-color: var(--shading);
+  --bg-color: #ddd;
+  --fg-color: #555;
+  color: var(--fg-color);
+  background-color: var(--bg-color);
   font-weight: 600;
   font-size: 16px;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
   transition: box-shadow transform background-color;
   transition-duration: 0.1s;
-  transition-timing-function: ease-out;
+  transition-timing-function: ease-in;
   transform-origin: center center;
-  }
+  position: relative;
+  display: inline-flex;
   &:hover, 
   &:focus {
-    --shading: #eee;
+    --bg-color: #eee;
     transform: scale(1.02);
-    box-shadow: 0 0px 0px 2px var(--applied);
+    box-shadow: 0 0px 0px 2px var(--fg-color);
     z-index: 2;
   }
   &:active {
-    --applied: black;
+    --fg-color: black;
     transform: scale(0.98);
     transition-duration: 0.03s;
-  }
-`
-
-const flexControl = css` {
-  position: relative;
-  display: inline-flex;
-  ${button}
   }
 `
 
@@ -71,26 +65,25 @@ const toggleWrap = css`
       }
     }
   }
+  // the label is what people see and click
   label { 
-    // the label is what people see and click
-    ${flexControl};
+    ${keyStyle};
     white-space: nowrap;
     padding: 7px 37px 0 12px;
     height: 40px;
   }
 `
 
-const dropdownWrap = css` {
-  ${flexControl};
+const dropdownWrap = css`
+  ${keyStyle};
   width: 158px;
   padding-left: 9px;
-  }
   &::after {
     content: "";
     pointer-events: none;
     position: absolute;
-    border-left: 3px solid var(--applied);
-    border-bottom: 3px solid var(--applied);
+    border-left: 3px solid var(--fg-color);
+    border-bottom: 3px solid var(--fg-color);
     height: 10px;
     width: 10px;
     right: 13px;
@@ -110,7 +103,7 @@ const dropdownWrap = css` {
 `
 
 const sliderWrap = css`
-  ${flexControl};
+  ${keyStyle};
   &:hover {
     overflow: visible;
     label {
@@ -120,26 +113,25 @@ const sliderWrap = css`
   }
 `
 
-const sliderInput = css` {
+const sliderInput = css`
   -webkit-appearance: none;
   cursor: pointer;
   appearance: none;
   width: 150px;
   height: 40px;
-  background: var(--shading);
+  background: var(--bg-color);
   outline: none;
   border-radius: 0;
-  }
   &:hover,
   &:focus {
     &::-webkit-slider-thumb {
       transform: scaleX(1.25) scaleY(1.05);
-      background: var(--applied);
+      background: var(--fg-color);
     }
     &::-moz-slider-thumb {
       transform: scaleX(1.25) scaleY(1.05);
-      background: var(--applied);
-      color: var(--applied);
+      background: var(--fg-color);
+      color: var(--fg-color);
     }
   }
   &::-webkit-slider-thumb {
@@ -175,10 +167,10 @@ const sliderInput = css` {
   }
 `
 
-const numberInput = css`{
+const numberInput = css`
   height: 40px;
   margin: none;
-  border: 3px solid var(--shading);
+  border: 3px solid var(--bg-color);
   font-weight: 600;
   padding: 0 0 0 8px;
   background-color: #eee;
@@ -190,25 +182,21 @@ const numberInput = css`{
     box-shadow: 0 0 0 0px -moz-mac-focusring;
     outline: none;
   }
-}
 `
 
-const subOption = css`{
+const subOption = css`
   transition-property: flex transform box-shadow background-color;
   overflow: hidden;
-  --shading: #ccc;
-  }
+  --bg-color: #ccc;
 `
 
-const closed = css`{
+const closed = css`
   display:none
-  }
 `
 
 export {
-  button,
+  keyStyle,
   dropdownWrap,
-  flexControl,
   sliderWrap,
   sliderInput,
   numberInput,
