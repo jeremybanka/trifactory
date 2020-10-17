@@ -1,6 +1,7 @@
 import { css } from '@emotion/core'
 
 const keyStyle = css`
+  font-family: Theia;
   user-select: none;
   cursor: pointer;
   --bg-color: #ddd;
@@ -46,7 +47,7 @@ const toggleWrap = css`
       // fill the box
     }
   }
-  input { 
+  input[type=checkbox] { 
     // the box itself is actually hidden
     position: absolute;
     right: 30;
@@ -104,6 +105,7 @@ const dropdownWrap = css`
 
 const sliderWrap = css`
   ${keyStyle};
+  display:flex;
   &:hover {
     overflow: visible;
     label {
@@ -111,65 +113,116 @@ const sliderWrap = css`
       opacity: 1;
     }
   }
-`
-
-const sliderInput = css`
   -webkit-appearance: none;
   cursor: pointer;
   appearance: none;
-  width: 150px;
-  height: 40px;
   background: var(--bg-color);
   outline: none;
   border-radius: 0;
+  margin: 0;
+  align-items: center;
   &:hover,
   &:focus {
     &::-webkit-slider-thumb {
-      transform: scaleX(1.25) scaleY(1.05);
+      transform: scaleX(0.25) scaleY(1.05);
       background: var(--fg-color);
     }
     &::-moz-slider-thumb {
-      transform: scaleX(1.25) scaleY(1.05);
+      transform: scaleX(0.25) scaleY(1.05);
       background: var(--fg-color);
       color: var(--fg-color);
     }
   }
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
-    border: none;
+  input[type=range] {
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      border: none;
+      appearance: none;
+      width: 20px; /* Set a specific slider handle width */
+      background: #888;
+      cursor: pointer;
+      transition: transform 0.05s;
+    }
+    &::-moz-range-thumb {
+      border-radius: 0px;
+      width: 20px;
+      background: #888;
+      cursor: pointer;
+      transition: transform 0.05s;
+    }
+    &::before,
+    &::after {
+      color: #888;
+      display: flex;
+      font-size: 24px;
+      height: 1em;
+      margin: 0px 6px 6px;
+    }
+    &::before {
+      font-family: Theia;
+      content: "-"; //endash
+    }
+    &::after {
+      font-family: Theia;
+      content: "+";
+    }-webkit-appearance: none;
+    cursor: pointer;
     appearance: none;
-    width: 20px; /* Set a specific slider handle width */
-    height: 40px; /* Slider handle height */
-    background: #888;
-    cursor: pointer;
-    transition: transform 0.05s;
-  }
-  &::-moz-range-thumb {
-    border-radius: 0px;
-    width: 20px;
-    height: 40px;
-    background: #888;
-    cursor: pointer;
-    transition: transform 0.05s;
-  }
-  &::before,
-  &::after {
-    color: #888;
-    display: inline;
-    font-size: 24px;
-    margin: 0px 6px;
-  }
-  &::before {
-    content: "–"; //endash
-  }
-  &::after {
-    content: "+";
+    background: var(--bg-color);
+    outline: none;
+    border-radius: 0;
+    margin: 0;
+    align-items: center;
+    &:hover,
+    &:focus {
+      &::-webkit-slider-thumb {
+        transform: scaleX(1.25) scaleY(1.05);
+        background: var(--fg-color);
+      }
+      &::-moz-slider-thumb {
+        transform: scaleX(1.25) scaleY(1.05);
+        background: var(--fg-color);
+        color: var(--fg-color);
+      }
+    }
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      border: none;
+      appearance: none;
+      width: 20px; /* Set a specific slider handle width */
+      background: #888;
+      cursor: pointer;
+      transition: transform 0.05s;
+    }
+    &::-moz-range-thumb {
+      border-radius: 0px;
+      width: 20px;
+      background: #888;
+      cursor: pointer;
+      transition: transform 0.05s;
+    }
+    &::before,
+    &::after {
+      color: #888;
+      display: flex;
+      font-size: 24px;
+      height: 1em;
+      margin: 0px 6px 6px;
+    }
+    &::before {
+      font-family: Theia;
+      content: "-"; //endash
+    }
+    &::after {
+      font-family: Theia;
+      content: "+";
+    }
   }
 `
 
 const numberInput = css`
   height: 40px;
-  margin: none;
+  margin-left: -2px;
   border: 3px solid var(--bg-color);
   font-weight: 600;
   padding: 0 0 0 8px;
@@ -194,11 +247,28 @@ const closed = css`
   display:none
 `
 
+export function getColorStyles(colors) {
+  return (
+    css`
+    --bg-color: ${colors.bg[0]};
+    --fg-color: ${colors.fg[0]};
+    &:hover, 
+    &:focus {
+      --bg-color: ${colors.bg[1]};
+      --fg-color: ${colors.fg[1]};
+    }
+    &:active {
+      --bg-color: ${colors.bg[2]};
+      --fg-color: ${colors.fg[2]};
+    }
+    `
+  )
+}
+
 export {
   keyStyle,
   dropdownWrap,
   sliderWrap,
-  sliderInput,
   numberInput,
   toggleWrap,
   subOption,

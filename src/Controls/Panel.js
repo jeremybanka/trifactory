@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core' // eslint-disable-line
-import { keyStyle } from './controlStyles'
+import { keyStyle, getColorStyles } from './controlStyles'
 
 export default function Panel({
   children,
@@ -10,19 +10,7 @@ export default function Panel({
   dimensions = [100, 100],
 }) {
   const customColorStyles = colors
-    ? css`
-      --bg-color: ${colors.bg[0]};
-      --fg-color: ${colors.fg[0]};
-      &:hover, 
-      &:focus {
-        --bg-color: ${colors.bg[1]};
-        --fg-color: ${colors.fg[1]};
-      }
-      &:active {
-        --bg-color: ${colors.bg[2]};
-        --fg-color: ${colors.fg[2]};
-      }
-      `
+    ? getColorStyles(colors)
     : ''
   console.log(colors)
   return (
