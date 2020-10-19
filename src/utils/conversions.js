@@ -54,9 +54,9 @@ function channelsToColorData({ R, G, B }) {
 }
 
 export function hexToColorData(hex) {
-  console.log('+++ input hex', hex)
   const { R, G, B } = hexToChannels(hex)
   /*
+  console.log('+++ input hex', hex)
   console.log('||| R', R)
   console.log('||| G', G)
   console.log('||| B', B)
@@ -66,6 +66,8 @@ export function hexToColorData(hex) {
 }
 
 export default function hueToChannelFactors(hue) {
+  while(hue >= 360) hue -= 360
+  while(hue < 0) hue += 360
   const hueReduced = hue / 60
   const hueInteger = Math.floor(hueReduced)
   const hueDecimal = hueReduced - hueInteger
@@ -100,6 +102,12 @@ function hueToSpecificLum(
 }
 
 function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
+  /*
+  console.log('||| hue', hue)
+  console.log('||| sat', sat)
+  console.log('||| lum', lum)
+  console.log('||| prefer', prefer)
+  */
   const channelFactors = hueToChannelFactors(hue)
   function getChannelSpread(actualSat) {
     const factorToChannel = factor => Math.round(channelFactors[factor] * actualSat)
@@ -126,14 +134,7 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
     }
     minLum = channelsToLum(minChannels)
     maxLum = channelsToLum(maxChannels)
-    trueLuminosity = (
-      lum <= maxLum &&
-      lum >= minLum
-    )
-      ? lum
-      : lum < minLum
-        ? minLum
-        : maxLum
+    trueLuminosity = funnel(lum, [minLum, maxLum])
     /*
     console.log('||| trueSaturation', trueSaturation)
     console.log('||| idealLum', lum)
@@ -155,15 +156,16 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
     minLum = channelsToLum(minChannels)
     /*
     console.log('||| trueLuminosity', trueLuminosity)
-    console.log('||| lumaAtSat255', lumaAtSat255)
+    console.log('||| lumAtSat255', lumAtSat255)
     console.log('||| maxSat', maxSat)
     console.log('||| trueSaturation', trueSaturation)
     console.log('||| minChannels', minChannels)
     */
   }
+  const maxWhite = (255 - Math.max(...Object.values(minChannels)))
   const white = funnel(
     Math.round((trueLuminosity - minLum) * 255),
-    [0, 255]
+    [0, maxWhite]
   )
   const { R, G, B } = {
     R: minChannels.R + white,
@@ -171,8 +173,11 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
     B: minChannels.B + white,
   }
   /*
+  console.log('||| maxWhite', maxWhite)
   console.log('||| white', white)
-  console.log('... channels', channels)
+  console.log('||| R', R)
+  console.log('||| G', G)
+  console.log('||| B', B)
   */
   return {
     channels: { R, G, B },
@@ -192,7 +197,7 @@ export function colorDataToHex({ hue, sat, lum, prefer }) {
   const { R, G, B } = channels
   const hex = channelsToHex({ R, G, B })
 
-  console.log('--- newHex', hex)
+  // console.log('--- newHex', hex)
 
   return { hex, fix, limit }
 }

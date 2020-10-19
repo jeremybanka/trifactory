@@ -28,7 +28,7 @@ export default function SliderNumeric({
       <Label text={label} />
       <input
         type="range"
-        value={value}
+        defaultValue={value}
         onChange={onChange}
         onClick={onClick}
         min={range[0]}
@@ -43,7 +43,7 @@ export default function SliderNumeric({
       />
       <input
         type="number"
-        value={value}
+        defaultValue={value}
         onChange={onChange}
         onClick={onClick}
         onTouchEnd={onClick}

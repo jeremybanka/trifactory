@@ -12,7 +12,7 @@ export default function Panel({
   const customColorStyles = colors
     ? getColorStyles(colors)
     : ''
-  console.log(colors)
+  // console.log(colors)
   return (
     <div
       onClick={onClick}

@@ -11,7 +11,7 @@ import {
 } from './utils/conversions'
 
 import {
-  variationsToHexGroups,
+  processionsToHexGroups,
 } from './utils/mutations'
 
 import {
@@ -49,7 +49,7 @@ export default function App() {
       return relatedHue
     })
     const newList = [hue].concat(relatedHues)
-    console.log('>>>', newList)
+    // console.log('>>>', newList)
     setHues({ form, list: newList })
   }
 
@@ -71,8 +71,8 @@ export default function App() {
       { color: 0, what: { hue, sat, lum } },
     ])
   }
-  console.log('new hues', hues)
-  console.log('new colors', colors)
+  // console.log('new hues', hues)
+  // console.log('new colors', colors)
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -101,6 +101,7 @@ export default function App() {
               <HexInput value={inputHex} onChange={changeInputHex} onKeyDown={handleKeypress} />
               <Panel
                 label=''
+                colorIdx={colorIdx}
                 onClick={handleSubmit}
                 dimensions={[36, 36]}
                 colors={{
@@ -123,7 +124,7 @@ export default function App() {
                 }}
               />
             </ControlStrip>
-            {variationsToHexGroups(color).map((hexGroup, hexGroupIdx) =>
+            {processionsToHexGroups(color).map((hexGroup, hexGroupIdx) =>
               <Row key={`Color-${colorIdx}-hexGroup-${hexGroup}`}>
                 {hexGroup.map((hex, hexIdx) =>
                   <Swatch
