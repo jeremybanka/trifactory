@@ -3,25 +3,19 @@ import { css, jsx } from '@emotion/core' // eslint-disable-line
 import { toggleWrap } from './controlStyles'
 // import './controls.scss'
 
-export default function Toggle({ id, label, checked, onChange }) {
-  return (
-    <div
-      css={css`${toggleWrap}`}
-    >
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        css={css`
-          
-        `}
-      />
-      <label
-        htmlFor={id}
-        css={css`
-          
-        }
+export default ({ id, label, checked, onChange }) => (
+  <div
+    css={css`${toggleWrap}`}
+  >
+    <input
+      id={id}
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+    />
+    <label
+      htmlFor={id}
+      css={css`
         &::before,
         &::after {
           position: absolute;
@@ -58,8 +52,7 @@ export default function Toggle({ id, label, checked, onChange }) {
           transition: transform 0.1s;
         }
       `}
-      >
-        {label}</label>
-    </div>
-  )
-}
+    >
+      {label}</label>
+  </div>
+)
