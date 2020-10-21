@@ -32,7 +32,8 @@ import { wrapAround } from '../utils'
  * Turqse  2.500 -> 2
  *                : green-into-cyan region
  *
- * the six color regions are bounded by red, yellow, green, cyan, blue, magenta.
+ * hueInteger is the 'whole number' piece of hueReduced.
+ * FYI, the six color regions are bounded by red, yellow, green, cyan, blue, magenta.
  *
  * @const {number} hueDecimal - tells where we are in this region.
  *
@@ -51,6 +52,7 @@ import { wrapAround } from '../utils'
  * Turqse  2.500 -> 0.500
  *                : at the halfway point
  *
+ * hueDecimal is the 'fraction' piece of hueReduced.
  * we are going to use this number to determine the value of the in-between channel.
  *
  * @const {number} x - used in primary-secondary transitions like Red into Yellow
