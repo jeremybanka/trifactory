@@ -1,19 +1,19 @@
 import React, { useState } from "react"
 import '@atlaskit/css-reset'
 
-import { GEOMETRIC } from './utils/constants'
+import { GEOMETRIC } from './luum/constants'
+import {
+  hexToSpec,
+  specToHex,
+} from "./luum/conversions"
+import { gradientsToHexArrays } from './luum/mutations'
+import { calibrationSheet } from './luum/configurations'
+import wrapAround from "./luum/utils"
 
 import {
-  hexToColorData,
-  colorDataToHex,
-} from './utils/conversions'
-
-import { processionsToHexGroups } from './utils/mutations'
-import { calibrationSheet } from './utils/configurations'
-import wrapAround from "./utils/wrapAround"
-
-import Panel from './Controls/Panel'
-import SliderNumeric from './Controls/SliderNumeric'
+  Panel,
+  SliderNumeric,
+} from './Controls'
 
 import {
   Main,
@@ -56,7 +56,7 @@ export default function App() {
   }
 
   const importHexColor = hex => {
-    const { hue, sat, lum } = hexToColorData(hex)
+    const { hue, sat, lum } = hexToSpec(hex)
     changeHues({ hue })
     handleSetColors([{ targetColorIdx: 0, content: { hue, sat, lum } }])
   }
@@ -80,7 +80,7 @@ export default function App() {
     <Main className="App">
       {colors.map((color, colorIdx) => {
         const { hue, sat, lum } = color
-        const hex = colorDataToHex({ hue, sat, lum })
+        const hex = specToHex({ hue, sat, lum })
         return (
           <Color key={`color-${colorIdx}`} hex={hex} className="Color">
             <ControlStrip>
@@ -111,7 +111,7 @@ export default function App() {
                 }}
               />
             </ControlStrip>
-            {processionsToHexGroups(color).map((hexGroup, hexGroupIdx) =>
+            {gradientsToHexArrays(color).map((hexGroup, hexGroupIdx) =>
               <Row key={`Color-${colorIdx}-hexGroup-${hexGroup}`}>
                 {hexGroup.map((hex, hexIdx) =>
                   <Swatch
