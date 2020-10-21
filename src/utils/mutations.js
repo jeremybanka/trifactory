@@ -1,11 +1,11 @@
 import { colorDataToHex } from './conversions'
 
-function defineChange(originalColorObj, currentStep, currentAxis, attribute) {
-  const { to } = currentAxis
+function defineChange(originalColorObj, currentStep, currentAxis) {
+  const { to, attribute } = currentAxis
   const from = (typeof currentAxis.from === 'number')
     ? currentAxis.from
-    : originalColorObj[currentAxis[attribute]]
-  const change = currentStep * (to - from) + from
+    : originalColorObj[attribute]
+  const change = from + currentStep * (to - from)
   /*
   console.log('||| to', to, 'from', from)
   console.log("||| new", attribute, 'is', change)
@@ -23,25 +23,25 @@ function defineChanges(originalColorObj, currentStep, axes) {
       originalColorObj,
       currentStep,
       currentAxis,
-      attribute
     )
     changes[attribute] = change
     // console.log('>>> changes', changes)
   }
   return changes
 }
-function processionToHexGroup(originalColorObj, procession) {
+function processionToHexGroup(originalColorObj, processionIdx) {
   const { hue, sat, lum } = originalColorObj
-  const { steps, axes, preferAttribute } = procession
+  const procession = originalColorObj.processions[processionIdx]
+  const { steps, axes, prefer } = procession
   const hexGroup = []
   for(let stepIdx = 0; stepIdx < steps.length; stepIdx++) {
     const currentStep = steps[stepIdx]
     const changes = defineChanges(originalColorObj, currentStep, axes)
-    const { hex } = colorDataToHex({
+    const hex = colorDataToHex({
       hue,
       sat,
       lum,
-      prefer: preferAttribute,
+      prefer,
       ...changes,
     })
     hexGroup.push(hex)
@@ -51,9 +51,8 @@ function processionToHexGroup(originalColorObj, procession) {
 export function processionsToHexGroups(originalColorObj) {
   const { processions } = originalColorObj
   const hexGroups = []
-  for(let idx = 0; idx < processions.length; idx++) {
-    const procession = processions[idx]
-    const hexGroup = processionToHexGroup(originalColorObj, procession)
+  for(let processionIdx = 0; processionIdx < processions.length; processionIdx++) {
+    const hexGroup = processionToHexGroup(originalColorObj, processionIdx)
     hexGroups.push(hexGroup)
   }
   return hexGroups

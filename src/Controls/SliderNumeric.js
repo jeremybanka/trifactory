@@ -4,7 +4,7 @@ import Label from './Label'
 import { sliderWrap, numberInput, subOption, closed, getColorStyles } from './controlStyles'
 // import './controls.scss'
 
-export default function SliderNumeric({
+export default ({
   label,
   value,
   onChange,
@@ -14,7 +14,7 @@ export default function SliderNumeric({
   isClosed,
   colors,
   dimensions = [40, 150],
-}) {
+}) => {
   const colorStyles = colors
     ? getColorStyles(colors)
     : ''

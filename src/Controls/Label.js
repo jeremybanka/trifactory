@@ -1,10 +1,9 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 
-export default function Label({ text }) {
-  return (
-    <label
-      css={css`
+export default ({ text }) => (
+  <label
+    css={css`
         pointer-events: none;
         transition-property: transform;
         transition-duration: 0.2s;
@@ -21,8 +20,7 @@ export default function Label({ text }) {
         font-size: 16px;
         font-weight: 500;
       `}
-    >
-      {text}
-    </label>
-  )
-}
+  >
+    {text}
+  </label>
+)

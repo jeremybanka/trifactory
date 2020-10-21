@@ -1,5 +1,6 @@
 import funnel from './funnel'
 import { CHANNEL_SPECIFIC_LUM } from './constants'
+import wrapAround from './wrapAround'
 
 function hexToChannels(hex) {
   const channel = idx => parseInt(hex.substr((idx * 2 + 1), 2), 16)
@@ -66,8 +67,7 @@ export function hexToColorData(hex) {
 }
 
 export default function hueToChannelFactors(hue) {
-  while(hue >= 360) hue -= 360
-  while(hue < 0) hue += 360
+  hue = wrapAround(hue, [0, 360])
   const hueReduced = hue / 60
   const hueInteger = Math.floor(hueReduced)
   const hueDecimal = hueReduced - hueInteger
@@ -84,17 +84,12 @@ export default function hueToChannelFactors(hue) {
   }
 }
 
-function hueToSpecificLum(
-  hue,
-  desaturateR = 0,
-  desaturateG = 0,
-  desaturateB = 0,
-) {
+function findSpecificLum(hue) {
   const [factorR, factorG, factorB] = hueToChannelFactors(hue)
 
-  const lumR = CHANNEL_SPECIFIC_LUM.R * factorR * (1 - desaturateR)
-  const lumB = CHANNEL_SPECIFIC_LUM.G * factorG * (1 - desaturateG)
-  const lumG = CHANNEL_SPECIFIC_LUM.B * factorB * (1 - desaturateB)
+  const lumR = CHANNEL_SPECIFIC_LUM.R * factorR
+  const lumG = CHANNEL_SPECIFIC_LUM.G * factorG
+  const lumB = CHANNEL_SPECIFIC_LUM.B * factorB
 
   const specificLum = lumR + lumG + lumB
 
@@ -109,8 +104,8 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
   console.log('||| prefer', prefer)
   */
   const channelFactors = hueToChannelFactors(hue)
-  function getChannelSpread(actualSat) {
-    const factorToChannel = factor => Math.round(channelFactors[factor] * actualSat)
+  function getChannelSpread(trueSaturation) {
+    const factorToChannel = factor => Math.round(channelFactors[factor] * trueSaturation)
     return {
       R: factorToChannel(0),
       G: factorToChannel(1),
@@ -125,7 +120,7 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
   let maxSat = 255
 
   if(prefer === 'sat') {
-    trueSaturation = Math.floor(sat)
+    trueSaturation = Math.min(Math.floor(sat), maxSat)
     minChannels = getChannelSpread(trueSaturation)
     const maxChannels = {
       R: minChannels.R + 255 - trueSaturation,
@@ -147,10 +142,13 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
   }
   if(prefer === 'lum') {
     trueLuminosity = funnel(lum, [0, 1])
-    const lumAtSat255 = hueToSpecificLum(hue)
-    maxSat = Math.round(trueLuminosity <= lumAtSat255
-      ? 255 * (trueLuminosity / lumAtSat255)
-      : 255 * (1 - trueLuminosity) / (1 - lumAtSat255))
+    const specificLum = findSpecificLum(hue)
+    maxSat = Math.min(
+      maxSat,
+      Math.round(trueLuminosity <= specificLum
+        ? 255 * (trueLuminosity / specificLum)
+        : 255 * (1 - trueLuminosity) / (1 - specificLum))
+    )
     trueSaturation = Math.min(sat, maxSat)
     minChannels = getChannelSpread(trueSaturation)
     minLum = channelsToLum(minChannels)
@@ -192,7 +190,7 @@ function colorDataToChannels({ hue, sat, lum, prefer = 'sat' }) {
   }
 }
 
-export function colorDataToHex({ hue, sat, lum, prefer }) {
+export function colorDataToHexFixLimit({ hue, sat, lum, prefer }) {
   const { channels, fix, limit } = colorDataToChannels({ hue, sat, lum, prefer })
   const { R, G, B } = channels
   const hex = channelsToHex({ R, G, B })
@@ -200,4 +198,9 @@ export function colorDataToHex({ hue, sat, lum, prefer }) {
   // console.log('--- newHex', hex)
 
   return { hex, fix, limit }
+}
+
+export function colorDataToHex({ hue, sat, lum, prefer }) {
+  const { hex } = colorDataToHexFixLimit({ hue, sat, lum, prefer })
+  return hex
 }

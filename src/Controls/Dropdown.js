@@ -3,25 +3,24 @@ import { css, jsx } from '@emotion/core' // eslint-disable-line
 import Label from './Label'
 import { dropdownWrap, subOption, closed } from './controlStyles'
 
-export default function Dropdown({
+export default ({
   onChange,
   options,
   label,
   subordinate,
   isClosed,
   value,
-}) {
-  return (
-    <div css={css`
+}) => (
+  <div css={css`
       ${dropdownWrap}
       ${subordinate ? subOption : ""}
       ${isClosed ? closed : ""}
     `}
-    >
-      <Label text={label} />
-      <select
-        onChange={onChange}
-        css={css`{
+  >
+    <Label text={label} />
+    <select
+      onChange={onChange}
+      css={css`
           cursor: pointer;
           color: var(--applied);
           width: 150px;
@@ -34,7 +33,6 @@ export default function Dropdown({
           border-radius: 0px;
           -webkit-appearance: none;
           -moz-appearance: none;
-          }
           &:hover,
           &:focus {
             box-shadow: 0 0 0 0px -moz-mac-focusring;
@@ -44,20 +42,18 @@ export default function Dropdown({
             font-weight: normal;
           }
         `}
-        value={value}
-
-      >
-        {options.map((option, idx) =>
-          <option
-            key={idx}
-            i={option.i}
-            value={option.value}
-            css={css`{
+      value={value}
+    >
+      {options.map((option, idx) =>
+        <option
+          key={idx}
+          i={option.i}
+          value={option.value}
+          css={css`{
               font-weight: normal;
             }`}
-          >{option.label}</option>
-        )}
-      </select>
-    </div>
-  )
-}
+        >{option.label}</option>
+      )}
+    </select>
+  </div>
+)

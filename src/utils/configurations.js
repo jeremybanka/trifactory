@@ -4,31 +4,41 @@ const hueRange = (a, z) => ({
   axes: [
     {
       attribute: 'hue',
-      to: a,
-      from: z,
+      from: a,
+      to: z,
     },
     {
       attribute: 'sat',
-      to: 255,
       from: 255,
+      to: 255,
     },
   ],
   steps: tenths,
-  preferAttribute: 'sat',
+  prefer: 'sat',
 })
 
-export const basic = {
+export const calibrationSheet = {
   hues: {
     form: 'polar',
     list: [0, 180],
   },
   colors: [
     {
-      linkFromHues: 0,
-      hue: 180,
-      sat: 127,
+      linkFromHues: 1,
+      hue: 120,
+      sat: 255,
       lum: 0.50,
       processions: [
+        {
+          axes: [
+            {
+              attribute: 'lum',
+              to: 0.333,
+            },
+          ],
+          steps: [1],
+          prefer: 'lum',
+        },
         {
           axes: [
             {
@@ -37,8 +47,8 @@ export const basic = {
               to: 1,
             },
           ],
-          steps: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97],
-          preferAttribute: 'lum',
+          steps: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97],
+          prefer: 'lum',
         },
         {
           axes: [
@@ -48,8 +58,8 @@ export const basic = {
               from: 0,
             },
           ],
-          steps: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97],
-          preferAttribute: 'sat',
+          steps: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97],
+          prefer: 'sat',
         },
       ],
     },
@@ -69,7 +79,7 @@ export const basic = {
         hueRange(180, 240),
         hueRange(210, 270),
         hueRange(240, 300),
-        hueRange(270, 300),
+        hueRange(270, 330),
         hueRange(300, 360),
         hueRange(330, 390),
       ],

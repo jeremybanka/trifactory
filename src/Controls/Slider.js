@@ -3,7 +3,7 @@ import { css, jsx } from '@emotion/core' // eslint-disable-line
 import { sliderWrap, getColorStyles } from './controlStyles'
 import Label from './Label'
 
-export default function Slider({
+export default ({
   id,
   label,
   value,
@@ -12,7 +12,7 @@ export default function Slider({
   className,
   colors,
   dimensions = [40, 150],
-}) {
+}) => {
   const colorStyles = colors
     ? getColorStyles(colors)
     : ''

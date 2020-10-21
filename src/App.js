@@ -1,22 +1,16 @@
 import React, { useState } from "react"
 import '@atlaskit/css-reset'
 
-import {
-  GEOMETRIC,
-} from './utils/constants'
+import { GEOMETRIC } from './utils/constants'
 
 import {
   hexToColorData,
   colorDataToHex,
 } from './utils/conversions'
 
-import {
-  processionsToHexGroups,
-} from './utils/mutations'
-
-import {
-  basic,
-} from './utils/configurations'
+import { processionsToHexGroups } from './utils/mutations'
+import { calibrationSheet } from './utils/configurations'
+import wrapAround from "./utils/wrapAround"
 
 import Panel from './Controls/Panel'
 import SliderNumeric from './Controls/SliderNumeric'
@@ -34,18 +28,15 @@ import {
 
 export default function App() {
   const [inputHex, setInputHex] = useState('ff0000')
-  const [hues, setHues] = useState(basic.hues)
-  const [colors, setColors] = useState(basic.colors)
+  const [hues, setHues] = useState(calibrationSheet.hues)
+  const [colors, setColors] = useState(calibrationSheet.colors)
   const changeInputHex = e => setInputHex(e.target.value)
-  const changeHues = (
-    {
-      hue = hues.list[0] || 0,
-      form = hues.principle || 'none',
-    }) => {
+  const changeHues = ({
+    hue = hues.list[0] || 0,
+    form = hues.principle || 'none',
+  }) => {
     const relatedHues = GEOMETRIC[form].map(transformation => {
-      let relatedHue = hue + transformation
-      while(relatedHue >= 360) relatedHue -= 360
-      while(relatedHue < 0) relatedHue += 360
+      const relatedHue = wrapAround(hue + transformation, [0, 360])
       return relatedHue
     })
     const newList = [hue].concat(relatedHues)
@@ -53,12 +44,12 @@ export default function App() {
     setHues({ form, list: newList })
   }
 
-  const changeColors = changes => {
+  const handleSetColors = changes => {
     const newColors = colors
     for(let index = 0; index < changes.length; index++) {
       const change = changes[index]
-      const currentColor = colors[change.color]
-      const newColor = { ...currentColor, ...change.what }
+      const targetColor = colors[change.targetColorIdx]
+      const newColor = { ...targetColor, ...change.content }
       newColors.splice(index, 1, newColor)
     }
     setColors(newColors)
@@ -67,9 +58,7 @@ export default function App() {
   const importHexColor = hex => {
     const { hue, sat, lum } = hexToColorData(hex)
     changeHues({ hue })
-    changeColors([
-      { color: 0, what: { hue, sat, lum } },
-    ])
+    handleSetColors([{ targetColorIdx: 0, content: { hue, sat, lum } }])
   }
   // console.log('new hues', hues)
   // console.log('new colors', colors)
@@ -86,14 +75,12 @@ export default function App() {
       handleSubmit(e)
     }
   }
-  // colorDataToHex(0, 254, .1)
-  // colorDataToHex(0, 254, .1, 'lum')
 
   return (
     <Main className="App">
       {colors.map((color, colorIdx) => {
         const { hue, sat, lum } = color
-        const { hex } = colorDataToHex({ hue, sat, lum })
+        const hex = colorDataToHex({ hue, sat, lum })
         return (
           <Color key={`color-${colorIdx}`} hex={hex} className="Color">
             <ControlStrip>
@@ -119,8 +106,8 @@ export default function App() {
                 range={[0, 360]}
                 dimensions={[120, 36]}
                 colors={{
-                  fg: [`#${inputHex}`, 'white', 'white'],
-                  bg: [`#${inputHex}`, `#${inputHex}`, `#${inputHex}`],
+                  fg: ['black', 'white', 'white'],
+                  bg: ['white', 'black', 'black'],
                 }}
               />
             </ControlStrip>

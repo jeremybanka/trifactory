@@ -2,13 +2,13 @@
 import { css, jsx } from '@emotion/core' // eslint-disable-line
 import { keyStyle, getColorStyles } from './controlStyles'
 
-export default function Panel({
+export default ({
   children,
   onClick,
   label,
   colors,
   dimensions = [100, 100],
-}) {
+}) => {
   const customColorStyles = colors
     ? getColorStyles(colors)
     : ''
