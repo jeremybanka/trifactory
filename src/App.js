@@ -1,20 +1,13 @@
 import React, { useState } from "react"
 import '@atlaskit/css-reset'
-
-import { GEOMETRIC } from './luum/constants'
-import {
-  hexToSpec,
-  specToHex,
-} from "./luum/conversions"
-import { gradientsToHexArrays } from './luum/mutations'
-import { calibrationSheet } from './luum/demo-config/colors'
-import { simulateCMYK as tunerConfig } from './luum/demo-config/tuners'
+// luum
+import { HUE_TRANSFORMATION_ARRAYS } from './luum/constants'
+import { hexToSpec } from "./luum/import"
+import { specToHex, gradientsToHexArrays } from './luum/export'
+import { calibrationSheets, builtInTunerKit } from './luum/preconfig'
 import { wrapAround } from "./luum/utils"
-
-import {
-  Panel,
-  SliderNumeric,
-} from './Controls'
+// Controls
+import { Panel, SliderNumeric } from './Controls'
 
 import {
   Main,
@@ -28,22 +21,25 @@ import {
 } from './StyleDefinitions'
 
 export default function App() {
-  const tuner = tunerConfig
-  const [hues, setHues] = useState(calibrationSheet.hues)
-  const [colors, setColors] = useState(calibrationSheet.colors)
+  const tuner = builtInTunerKit.simulateCMYK
+  const [hues, setHues] = useState(calibrationSheets.satLumTestAndRainbows.hues)
+  const [colors, setColors] = useState(calibrationSheets.satLumTestAndRainbows.colors)
   const [inputHex, setInputHex] = useState(specToHex({ ...colors[0], tuner }).substr(1, 6))
   const changeInputHex = e => setInputHex(e.target.value)
   const changeHues = ({
-    hue = hues.list[0] || 0,
+    primeHue = hues.list[0] || 0,
     form = hues.principle || 'none',
   }) => {
-    const relatedHues = GEOMETRIC[form].map(transformation => {
-      const relatedHue = wrapAround(hue + transformation, [0, 360])
+    const relatedHues = HUE_TRANSFORMATION_ARRAYS[form].map(transformation => {
+      const relatedHue = wrapAround(primeHue + transformation, [0, 360])
       return relatedHue
     })
-    const newList = [hue].concat(relatedHues)
+    const newList = [primeHue].concat(relatedHues)
+    setHues({
+      form,
+      list: newList,
+    })
     // console.log('>>>', newList)
-    setHues({ form, list: newList })
   }
 
   const handleSetColors = changes => {
