@@ -16,7 +16,7 @@ export default ({ text }) => (
         height: 25px;
         padding: 0 5px;
         background-color: var(--fg-color);
-        color: white;
+        color: var(--bg-color);
         font-size: 16px;
         font-weight: 500;
       `}

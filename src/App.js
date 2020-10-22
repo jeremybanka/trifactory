@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import '@atlaskit/css-reset'
 // luum
 import { HUE_TRANSFORMATION_ARRAYS } from './luum/constants'
 import { hexToSpec } from "./luum/import"
@@ -25,8 +24,9 @@ export default function App() {
   const [hues, setHues] = useState(calibrationSheets.satLumTestAndRainbows.hues)
   const [colors, setColors] = useState(calibrationSheets.satLumTestAndRainbows.colors)
   const [inputHex, setInputHex] = useState(specToHex({ ...colors[0], tuner }).substr(1, 6))
-  const changeInputHex = e => setInputHex(e.target.value)
-  const changeHues = ({
+  const handleSetInputHex = e => setInputHex(e.target.value)
+
+  const handleSetHues = ({
     primeHue = hues.list[0] || 0,
     form = hues.principle || 'none',
   }) => {
@@ -43,11 +43,13 @@ export default function App() {
   }
 
   const handleSetColors = changes => {
-    const newColors = colors
+    console.log('>>>', ...changes)
+    const newColors = [...colors]
     for(let index = 0; index < changes.length; index++) {
-      const change = changes[index]
-      const targetColor = colors[change.targetColorIdx]
-      const newColor = { ...targetColor, ...change.content }
+      const { targetColorIdx, content } = changes[index]
+      const targetColor = colors[targetColorIdx]
+      const newColor = { ...targetColor, ...content }
+      console.log('>>>', newColor)
       newColors.splice(index, 1, newColor)
     }
     setColors(newColors)
@@ -55,7 +57,7 @@ export default function App() {
 
   const importHexColor = hex => {
     const { hue, sat, lum } = hexToSpec(hex)
-    changeHues({ hue })
+    handleSetHues({ hue })
     handleSetColors([{ targetColorIdx: 0, content: { hue, sat, lum } }])
   }
   // console.log('new hues', hues)
@@ -74,6 +76,19 @@ export default function App() {
     }
   }
 
+  const adjustHue = (e, colorIdx) => {
+    const hue = parseInt(e.target.value, 10)
+    handleSetColors([{ targetColorIdx: colorIdx, content: { hue } }])
+  }
+  const adjustSat = (e, colorIdx) => {
+    const sat = parseInt(e.target.value, 10)
+    handleSetColors([{ targetColorIdx: colorIdx, content: { sat } }])
+  }
+  const adjustLum = (e, colorIdx) => {
+    const lum = (parseInt(e.target.value, 10)) / 100
+    handleSetColors([{ targetColorIdx: colorIdx, content: { lum } }])
+  }
+
   return (
     <Main className="App">
       {colors.map((color, colorIdx) => {
@@ -83,7 +98,7 @@ export default function App() {
           <Color key={`color-${colorIdx}`} hex={hex} className="Color">
             <ControlStrip>
               <InputLabel>#</InputLabel>
-              <HexInput value={inputHex} onChange={changeInputHex} onKeyDown={handleKeypress} />
+              <HexInput value={inputHex} onChange={handleSetInputHex} onKeyDown={handleKeypress} />
               <Panel
                 label=''
                 colorIdx={colorIdx}
@@ -100,8 +115,31 @@ export default function App() {
               </Panel>
               <SliderNumeric
                 label="Hue"
-                value={70}
+                handler={e => adjustHue(e, colorIdx)}
+                initialValue={70}
                 range={[0, 360]}
+                dimensions={[120, 36]}
+                colors={{
+                  fg: ['black', 'white', 'white'],
+                  bg: ['white', 'black', 'black'],
+                }}
+              />
+              <SliderNumeric
+                label="Sat"
+                handler={e => adjustSat(e, colorIdx)}
+                initialValue={80}
+                range={[0, 255]}
+                dimensions={[120, 36]}
+                colors={{
+                  fg: ['black', 'white', 'white'],
+                  bg: ['white', 'black', 'black'],
+                }}
+              />
+              <SliderNumeric
+                label="Lum"
+                handler={e => adjustLum(e, colorIdx)}
+                initialValue={0.5}
+                range={[0, 100]}
                 dimensions={[120, 36]}
                 colors={{
                   fg: ['black', 'white', 'white'],
