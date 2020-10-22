@@ -28,7 +28,7 @@ export const calibrationSheet = {
       hue: 120,
       sat: 255,
       lum: 0.50,
-      processions: [
+      gradients: [
         {
           axes: [
             {
@@ -69,7 +69,7 @@ export const calibrationSheet = {
       hue: 180,
       sat: 0,
       lum: 0,
-      processions: [
+      gradients: [
         hueRange(0, 60),
         hueRange(30, 90),
         hueRange(60, 120),

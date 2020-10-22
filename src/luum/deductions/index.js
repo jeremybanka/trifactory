@@ -1,11 +1,13 @@
-import hueFromChannels from './hueFromChannels'
-import satFromChannels from './satFromChannels'
-import lumFromChannels from './lumFromChannels'
-import specificLumFromHue from './specificLumFromHue'
+import inherentLumFromHue from './inherentLumFromHue'
+import maxSatFromHueByTuner from './maxSatFromHueByTuner'
+import specHueFromChannels from './specHueFromChannels'
+import specSatFromChannels from './specSatFromChannels'
+import specLumFromChannels from './specLumFromChannels'
 
 export {
-  hueFromChannels,
-  satFromChannels,
-  lumFromChannels,
-  specificLumFromHue,
+  maxSatFromHueByTuner,
+  specHueFromChannels,
+  specSatFromChannels,
+  specLumFromChannels,
+  inherentLumFromHue,
 }

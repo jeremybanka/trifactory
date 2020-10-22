@@ -7,8 +7,9 @@ import {
   specToHex,
 } from "./luum/conversions"
 import { gradientsToHexArrays } from './luum/mutations'
-import { calibrationSheet } from './luum/configurations'
-import wrapAround from "./luum/utils"
+import { calibrationSheet } from './luum/demo-config/colors'
+import { simulateCMYK as tunerConfig } from './luum/demo-config/tuners'
+import { wrapAround } from "./luum/utils"
 
 import {
   Panel,
@@ -30,6 +31,7 @@ export default function App() {
   const [inputHex, setInputHex] = useState('ff0000')
   const [hues, setHues] = useState(calibrationSheet.hues)
   const [colors, setColors] = useState(calibrationSheet.colors)
+  const [tuner, setTuner] = useState(tunerConfig)
   const changeInputHex = e => setInputHex(e.target.value)
   const changeHues = ({
     hue = hues.list[0] || 0,
@@ -80,7 +82,7 @@ export default function App() {
     <Main className="App">
       {colors.map((color, colorIdx) => {
         const { hue, sat, lum } = color
-        const hex = specToHex({ hue, sat, lum })
+        const hex = specToHex({ hue, sat, lum, tuner })
         return (
           <Color key={`color-${colorIdx}`} hex={hex} className="Color">
             <ControlStrip>
@@ -111,7 +113,7 @@ export default function App() {
                 }}
               />
             </ControlStrip>
-            {gradientsToHexArrays(color).map((hexGroup, hexGroupIdx) =>
+            {gradientsToHexArrays(color, tuner).map((hexGroup, hexGroupIdx) =>
               <Row key={`Color-${colorIdx}-hexGroup-${hexGroup}`}>
                 {hexGroup.map((hex, hexIdx) =>
                   <Swatch

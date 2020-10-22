@@ -1,11 +1,12 @@
 import hueToRelativeChannels from './hueToRelativeChannels'
 import {
-  lumFromChannels,
-  specificLumFromHue,
+  specLumFromChannels as lumFromChannels,
+  inherentLumFromHue,
+  maxSatFromHueByTuner,
 } from '../deductions'
 import funnel from '../utils/funnel'
 
-export default ({ hue, sat, lum, prefer = 'sat' }) => {
+export default ({ hue, sat, lum, prefer = 'sat', tuner }) => {
   /*
   console.log('||| hue', hue)
   console.log('||| sat', sat)
@@ -26,7 +27,7 @@ export default ({ hue, sat, lum, prefer = 'sat' }) => {
   let minChannels
   let minLum = 0
   let maxLum = 1
-  let maxSat = 255
+  let maxSat = maxSatFromHueByTuner(hue, tuner)
 
   if(prefer === 'sat') {
     trueSaturation = Math.min(Math.floor(sat), maxSat)
@@ -51,7 +52,7 @@ export default ({ hue, sat, lum, prefer = 'sat' }) => {
   }
   if(prefer === 'lum') {
     trueLuminosity = funnel(lum, [0, 1])
-    const specificLum = specificLumFromHue(hue)
+    const specificLum = inherentLumFromHue(hue)
     maxSat = Math.min(
       maxSat,
       Math.round(trueLuminosity <= specificLum
