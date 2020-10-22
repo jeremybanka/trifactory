@@ -30,14 +30,18 @@ function interpolateChanges(originalColorObject, currentStep, axes) {
   return changes
 }
 
-function gradientToHexGroup(originalColorObject, gradientIdx, tuner) {
+function gradientToHexArray(originalColorObject, gradientIdx, tuner) {
   const { hue, sat, lum } = originalColorObject
   const gradient = originalColorObject.gradients[gradientIdx]
   const { steps, axes, prefer } = gradient
   const hexArray = []
   for(let stepIdx = 0; stepIdx < steps.length; stepIdx++) {
     const currentStep = steps[stepIdx]
-    const changes = interpolateChanges(originalColorObject, currentStep, axes)
+    const changes = interpolateChanges(
+      originalColorObject,
+      currentStep,
+      axes,
+    )
     const hex = specToHex({
       hue,
       sat,
@@ -54,7 +58,7 @@ export function gradientsToHexArrays(originalColorObject, tuner) {
   const { gradients } = originalColorObject
   const hexArrays = []
   for(let gradientIdx = 0; gradientIdx < gradients.length; gradientIdx++) {
-    const hexGroup = gradientToHexGroup(originalColorObject, gradientIdx, tuner)
+    const hexGroup = gradientToHexArray(originalColorObject, gradientIdx, tuner)
     hexArrays.push(hexGroup)
   }
   return hexArrays

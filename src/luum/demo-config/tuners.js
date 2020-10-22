@@ -11,7 +11,7 @@ export const noFilter = [
 
 export const simulateCMYK = [
   {
-    hue: 50,
+    hue: 55,
     sat: 255,
   },
   {
@@ -19,7 +19,7 @@ export const simulateCMYK = [
     sat: 127,
   },
   {
-    hue: 190,
+    hue: 200,
     sat: 255,
   },
   {
@@ -31,19 +31,15 @@ export const simulateCMYK = [
     sat: 170,
   },
   {
-    hue: 260,
-    sat: 255,
-  },
-  {
-    hue: 280,
-    sat: 255,
+    hue: 270,
+    sat: 230,
   },
   {
     hue: 300,
-    sat: 200,
+    sat: 210,
   },
   {
-    hue: 360,
+    hue: 320,
     sat: 255,
   },
 ]

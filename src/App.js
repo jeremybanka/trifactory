@@ -28,10 +28,10 @@ import {
 } from './StyleDefinitions'
 
 export default function App() {
-  const [inputHex, setInputHex] = useState('ff0000')
+  const tuner = tunerConfig
   const [hues, setHues] = useState(calibrationSheet.hues)
   const [colors, setColors] = useState(calibrationSheet.colors)
-  const [tuner, setTuner] = useState(tunerConfig)
+  const [inputHex, setInputHex] = useState(specToHex({ ...colors[0], tuner }).substr(1, 6))
   const changeInputHex = e => setInputHex(e.target.value)
   const changeHues = ({
     hue = hues.list[0] || 0,

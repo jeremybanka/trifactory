@@ -11,7 +11,7 @@ export default (hue, tuner) => {
       hue >= wrapAround(tuningPointA.hue, [0, 360]) &&
       hue < tuningPointB.hue
     ) {
-      console.log('||| hue', hue, 'is between', tuningPointA.hue, 'and', tuningPointB.hue)
+      // console.log('||| hue', hue, 'is between', tuningPointA.hue, 'and', tuningPointB.hue)
       let _ = hue // 70
       _ -= tuningPointA.hue // 70 - 50 = 20
       _ /= tuningPointB.hue - tuningPointA.hue // 20 / (120 - 50) = 2/7
