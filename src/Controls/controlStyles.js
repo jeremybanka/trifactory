@@ -18,19 +18,20 @@ const keyStyle = css`
   position: relative;
   display: inline-flex;
   &:hover, 
-  &:focus {
+  &:focus,
+  &:focus-within {
     --bg-color: #eee;
     transform: scale(1.02);
     box-shadow: 0 0px 0px 2px var(--fg-color);
     z-index: 2;
   }
-  &:active {
+  &:active, 
+  &.active {
     --fg-color: black;
     transform: scale(0.98);
     transition-duration: 0.03s;
   }
 `
-
 const toggleWrap = css` 
   &:hover label, 
   &:focus label {
@@ -106,7 +107,9 @@ const dropdownWrap = css`
 const sliderWrap = css`
   ${keyStyle};
   display:flex;
-  &:hover {
+  &:hover,
+  &:focus,
+  &:focus-within {
     overflow: visible;
     label {
       transform: translateY(-15px) scaleY(1);
@@ -119,10 +122,10 @@ const sliderWrap = css`
   background: var(--bg-color);
   outline: none;
   border-radius: 0;
-  margin: 0;
   align-items: center;
   &:hover,
-  &:focus {
+  &:focus,
+  &:focus-within{
     &::-webkit-slider-thumb {
       transform: scaleX(0.25) scaleY(1.05);
       background: var(--fg-color);
@@ -165,7 +168,8 @@ const sliderWrap = css`
     &::after {
       font-family: Theia;
       content: "+";
-    }-webkit-appearance: none;
+    }
+    -webkit-appearance: none;
     cursor: pointer;
     appearance: none;
     background: var(--bg-color);
@@ -187,23 +191,24 @@ const sliderWrap = css`
     }
     &::-webkit-slider-thumb {
       -webkit-appearance: none; /* Override default look */
+      transform: scaleX(1) scaleY(1);
       border: none;
       appearance: none;
       width: 20px; /* Set a specific slider handle width */
-      background: #888;
+      background: var(--mg-color);
       cursor: pointer;
       transition: transform 0.05s;
     }
     &::-moz-range-thumb {
       border-radius: 0px;
       width: 20px;
-      background: #888;
+      background: var(--mg-color);
       cursor: pointer;
       transition: transform 0.05s;
     }
     &::before,
     &::after {
-      color: #888;
+      color: var(--mg-color);
       display: flex;
       font-size: 24px;
       height: 1em;
@@ -221,18 +226,22 @@ const sliderWrap = css`
 `
 
 const numberInput = css`
+  font-family: Theia;
+  font-weight: 500;
+  font-size: 15px;
   height: 40px;
   margin-left: -2px;
   border: 3px solid var(--bg-color);
-  font-weight: 600;
   padding: 0 0 0 8px;
-  background-color: #eee;
+  color: var(--ex-fg-color);
+  background-color: var(--ex-bg-color);
   border-radius: 0px;
   min-width: 45px;
   max-width: 50px;
   &:hover,
-  &:focus {
-    box-shadow: 0 0 0 0px -moz-mac-focusring;
+  &:focus,
+  &:focus-within {
+    box-shadow: 0 0 0 0;
     outline: none;
   }
 `
@@ -253,13 +262,32 @@ export function getColorStyles(colors) {
     --bg-color: ${colors.bg[0]};
     --fg-color: ${colors.fg[0]};
     &:hover, 
-    &:focus {
+    &:focus,
+    &:focus-within {
       --bg-color: ${colors.bg[1]};
       --fg-color: ${colors.fg[1]};
     }
     &:active {
       --bg-color: ${colors.bg[2]};
       --fg-color: ${colors.fg[2]};
+    }
+    `
+  )
+}
+
+export function getExtraColorStyles(colors) {
+  return (
+    css`
+    --ex-fg-color: ${colors.exfg};
+    --ex-bg-color: ${colors.exbg};
+    --mg-color: ${colors.mg[0]};
+    &:hover, 
+    &:focus,
+    &:focus-within {
+      --mg-color: ${colors.mg[0]};
+    }
+    &:active {
+      --mg-color: ${colors.mg[0]};
     }
     `
   )

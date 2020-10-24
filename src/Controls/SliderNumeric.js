@@ -1,42 +1,49 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core' // eslint-disable-line
-import { useState } from 'react'
+import { css, jsx } from '@emotion/core'
+import { useState, useEffect } from 'react'
 import Label from './Label'
-import { sliderWrap, numberInput, subOption, closed, getColorStyles } from './controlStyles'
-// import './controls.scss'
+import { sliderWrap, numberInput, getColorStyles, getExtraColorStyles } from './controlStyles'
 
 export default ({
+  id,
   label,
   initialValue,
   handler,
   range,
   step = 1,
-  subordinate,
-  isClosed,
   colors,
-  dimensions = [40, 150],
+  dimensions = [36, 150],
 }) => {
   const [currentNumber, setCurrentNumber] = useState(initialValue)
+
+  useEffect(() => {
+    setCurrentNumber(initialValue)
+    setCurrentNumber(initialValue)
+  }, [initialValue])
+
   const handleChange = e => {
     setCurrentNumber(e.target.value)
-    if(document.activeElement === document.getElementById("how-many-mag-groups")) {
+    if(document.activeElement === document.getElementById(id)) {
       setCurrentNumber(e.target.value)
     }
   }
   const colorStyles = colors
     ? getColorStyles(colors)
     : ''
+  const extraColorStyles = colors
+    ? getExtraColorStyles(colors)
+    : ''
 
   return (
     <div css={css`
       ${sliderWrap}
       ${colorStyles}
-      ${subordinate ? subOption : ""}
-      ${isClosed ? closed : ""}
+      ${extraColorStyles}
     `}
     >
       <Label text={label} />
       <input
+        id={id}
         type="range"
         value={currentNumber}
         onChange={handleChange}
@@ -53,7 +60,7 @@ export default ({
       />
       <input
         type="number"
-        value={currentNumber}
+        value={Math.round(currentNumber)}
         onChange={handleChange}
         onClick={handler}
         css={css`

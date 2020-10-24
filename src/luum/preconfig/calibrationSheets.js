@@ -1,4 +1,5 @@
 const tenths = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+const dynamicRange = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97]
 
 const hueRange = (a, z) => ({
   axes: [
@@ -20,8 +21,8 @@ const hueRange = (a, z) => ({
 export default {
   satLumTestAndRainbows: {
     hues: {
-      form: 'polar',
-      list: [0, 180],
+      paletteMode: 'polar',
+      list: [120, 300],
     },
     colors: [
       {
@@ -48,7 +49,7 @@ export default {
                 to: 1,
               },
             ],
-            steps: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97],
+            steps: dynamicRange,
             prefer: 'lum',
           },
           {
@@ -59,7 +60,7 @@ export default {
                 from: 0,
               },
             ],
-            steps: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.94, 0.97],
+            steps: dynamicRange,
             prefer: 'sat',
           },
         ],

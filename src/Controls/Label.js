@@ -11,7 +11,7 @@ export default ({ text }) => (
         transform: translateY(-10px) scaleY(0.9);
         opacity: 0;
         position: absolute;
-        top: -17px;
+        top: -11px;
         right: -2px;
         height: 25px;
         padding: 0 5px;

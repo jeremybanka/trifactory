@@ -122,6 +122,6 @@ export default hue => {
     case 3: return [0, y, 1]
     case 4: return [x, 0, 1]
     case 5: return [1, 0, y]
-    default: throw new Error('invalid hue served')
+    default: throw new Error('invalid hue served:', hue)
   }
 }

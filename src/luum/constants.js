@@ -1,4 +1,4 @@
-export const HUE_TRANSFORMATION_ARRAYS = {
+export const HUE_STRUCTURES = {
   none: [],
   polar: [180],
   trine: [120, 240],
