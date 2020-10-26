@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core' // eslint-disable-line
+import { css, jsx } from '@emotion/core'
 import { keyStyle, getColorStyles } from './controlStyles'
 
 export default ({
@@ -12,7 +12,6 @@ export default ({
   const customColorStyles = colors
     ? getColorStyles(colors)
     : ''
-  // console.log(colors)
   return (
     <div
       onClick={onClick}
