@@ -32,8 +32,6 @@ export default ({
   }, [color, tuner])
 
   const importHexColor = input => {
-    debugger
-    console.log(input)
     const hex = validateHex.process(input)
     const { hue, sat, lum } = hexToSpec(hex)
     handleSetHues({ hue })
