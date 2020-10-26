@@ -1,6 +1,8 @@
-import hueFromChannels from "../deductions/hueFromChannels"
-import satFromChannels from "../deductions/satFromChannels"
-import lumFromChannels from "../deductions/lumFromChannels"
+import {
+  hueFromChannels,
+  satFromChannels,
+  lumFromChannels,
+} from "../deductions"
 
 export default ({ R, G, B }) => {
   const hue = hueFromChannels({ R, G, B })

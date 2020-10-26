@@ -1,20 +1,31 @@
 import { wrapAround } from '../utils'
-
 /**
  * Gives us the relative values of the channels,
  * irrespective of the white light beneath them.
  * @param {number} hue - in degrees. Gets safely wrapped around first thing.
+ *
  * DgiRed    0 ->   0
+ *
  * Sunlgt   50 ->  50
+ *
  * DgiYlw   60 ->  60
+ *
  * Citron   70 ->  70
+ *
  * Turqse  510 -> 150
- * @const {number} hueReduced - dividing by 60 gives a more useful form.
+ *
+ * @const {number} hueReduced - hue 0-359.9 is now a floating point 0-5.999.
+ *
  * DgiRed    0 ->   0  ~  0.000
+ *
  * Sunlgt   50 -> 5/6  ~  0.833
+ *
  * DgiYlw   60 ->   1  ~  1.000
+ *
  * Citron   70 -> 7/6  ~  1.167
+ *
  * Turqse  150 -> 5/2  ~  2.500
+ *
  * @const {number} hueInteger - from 1-6. Tells us what color region we are in.
  *
  * DgiRed  0.000 -> 0
@@ -66,16 +77,19 @@ import { wrapAround } from '../utils'
    * as an instructive case. These colors are all basically yellow.
    *
    * Sunlgt is hue 50, which puts it near the end of the red-into-yellow region.
+     *
      * This means its Red channel is full, and its Green channel is almost full.
-     * The fullness of its Green channel is in fact directly proportional to its
+     * The fullness of its Green channel is directly proportional to its
      * hueDecimal, the distance from the beginning of this region: 0.833
      *
    * Citron is hue 70, which puts it near the beginning of the yellow-into-green region.
-     * This means its Green channel is full, and its Red channel is almost full.
+     *
+     * This means its Red channel is ALMOST FULL, and its Green channel is FULL.
      * So the fullness of its Red channel is INVERSELY porportional to its
      * hueDecimal, the distance from the beginning of this region: 1 - 0.167 = 0.833
      *
    * DgiYlw is hue 60, which puts it at the very beginning of the yellow-into-green region.
+     *
      * This means its Red Channel and its Green channel must both be full.
      * Like Citron, the fullness of DgiYlw's Red channel is inversely proporional to its
      * hueDecimal, which is 0. Therefore DgiYlw's Red channel has a fullness of 1.
@@ -83,9 +97,13 @@ import { wrapAround } from '../utils'
  * @returns array of values reflecting the spread between channels
  *
  * DgiRed  case 0:  [   R ===== 1       G = x = 0.000   B ===== 0      ]
+ *
  * Sunlgt  case 0:  [   R ===== 1       G = x = 0.833   B ===== 0      ]
+ *
  * DgiYlw  case 1:  [   R = y = 1.000   G ===== 1       B ===== 0      ]
+ *
  * Citron  case 1:  [   R = y = 0.833   G ===== 1       B ===== 0      ]
+ *
  * Turqse  case 2:  [   R ===== 0       G ===== 1       B = x = 0.500  ]
  *
  * here we see detailed breakdowns of the function's final output for our running examples.

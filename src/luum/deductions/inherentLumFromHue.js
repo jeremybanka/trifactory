@@ -1,5 +1,5 @@
 import { CHANNEL_SPECIFIC_LUM } from "../constants"
-import hueToRelativeChannels from "../conversions/hueToRelativeChannels"
+import hueToRelativeChannels from "../import/hueToRelativeChannels"
 
 export default hue => {
   const [factorR, factorG, factorB] = hueToRelativeChannels(hue)

@@ -1,4 +1,4 @@
-export const GEOMETRIC = {
+export const HUE_TRANSFORMATION_ARRAYS = {
   none: [],
   polar: [180],
   trine: [120, 240],
