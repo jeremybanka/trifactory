@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 // luum
-import { HUE_STRUCTURES } from './luum/constants'
-import { calibrationSheets, builtInTunerKit } from './luum/preconfig'
-import { wrapAround } from './luum/utils'
+import { HUE_STRUCTURES, calibrationSheets, builtInTunerKit, wrapAround } from 'luum'
 // Structure
 import { App } from './StyleDefinitions'
 // Children

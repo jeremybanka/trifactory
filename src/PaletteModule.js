@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
 // luum
-import { hexToSpec } from './luum/import'
-import { specToHex, gradientsToHexArrays } from './luum/export'
-import getOffset from './luum/getOffset'
-import getStandout from './luum/getStandout'
+import {
+  hexToSpec,
+  specToHex,
+  gradientsToHexArrays,
+  getOffset,
+  getStandout,
+  validateHex,
+} from 'luum'
 // Controls
 import { Toggle, Slider, TextField } from './Controls'
 
@@ -14,7 +18,6 @@ import {
   ControlStrip,
   ControlStripSpacer,
 } from './StyleDefinitions'
-import { validateHex } from './luum/utils'
 
 export default ({
   tuner,
