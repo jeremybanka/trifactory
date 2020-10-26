@@ -10,9 +10,9 @@ export default ({
   frontMatter,
   passedValue,
   validate,
-  handleSubmit,
-  colors,
-  buttonColors = colors,
+  handler,
+  colorScheme,
+  buttonColorScheme = colorScheme,
   dimensions = [150, 36],
 }) => {
   const [value, setValue] = useState(passedValue)
@@ -40,28 +40,26 @@ export default ({
     ) setValue(e.target.value)
     setValueIsAcceptable(attemptIsAcceptableLength)
   }
-  const handleKeyDown = e => { // it triggers by pressing the enter key'
-    if(e.keyCode === 13) {
-      setEnterIsHeld(true)
-    }
+  const handleKeyDown = e => {
+    if(e.keyCode === 13) setEnterIsHeld(true)
   }
-  const handleKeyUp = e => { // it triggers by pressing the enter key'
+  const handleKeyUp = e => {
     if(e.keyCode === 13) {
-      if(valueIsAcceptable) handleSubmit(value)
+      if(valueIsAcceptable) handler(value)
       setEnterIsHeld(false)
     }
   }
   const handleButtonPress = () => {
-    if(valueIsAcceptable) handleSubmit(value)
+    if(valueIsAcceptable) handler(value)
   }
 
   const labelContent = 'Hexcode'
 
-  const colorStyles = colors
-    ? getColorStyles(colors)
+  const colorStyles = colorScheme
+    ? getColorStyles(colorScheme)
     : ''
-  const extraColorStyles = colors
-    ? getExtraColorStyles(colors)
+  const extraColorStyles = colorScheme
+    ? getExtraColorStyles(colorScheme)
     : ''
 
   return (
@@ -94,8 +92,8 @@ export default ({
         type="text"
         value={value}
         onChange={handleSetValue}
-        onKeyDownCapture={handleKeyDown}
-        onKeyUpCapture={handleKeyUp}
+        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         css={css`
           ${colorStyles};
           width:  ${dimensions[0]}px;
@@ -115,7 +113,7 @@ export default ({
         label=''
         onClick={handleButtonPress}
         dimensions={[dimensions[1], dimensions[1]]}
-        colors={buttonColors}
+        colorScheme={buttonColorScheme}
       >
         <Icon>
           R

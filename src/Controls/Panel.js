@@ -6,11 +6,11 @@ export default ({
   children,
   onClick,
   label,
-  colors,
+  colorScheme,
   dimensions = [100, 100],
 }) => {
-  const customColorStyles = colors
-    ? getColorStyles(colors)
+  const customColorStyles = colorScheme
+    ? getColorStyles(colorScheme)
     : ''
   return (
     <div

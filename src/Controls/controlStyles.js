@@ -35,12 +35,10 @@ const keyStyle = css`
 const toggleWrap = css` 
   &:hover label, 
   &:focus label {
-    &::before {
-      border-width: 2px;
-      // clarify the box
-    }
+    &::before { border-width: 2px }
   }
-  &:active label {
+  &:active, 
+  &.active label {
     transition-property: box-shadow; 
     // make everything except the box shadow 'snap'
     &::before {
@@ -51,16 +49,9 @@ const toggleWrap = css`
   input[type=checkbox] { 
     // the box itself is actually hidden
     position: absolute;
-    right: 30;
     opacity: 0;
-    height: 40px;
-    width: 40px;
     margin-right: -30px;
     &:checked + label {
-      &::before {
-        border-width: 10px; 
-        // keep box filled
-      }
       &::after {
         transform: rotate(-45deg) scale(1);
         opacity: 1;
@@ -71,8 +62,40 @@ const toggleWrap = css`
   label { 
     ${keyStyle};
     white-space: nowrap;
-    padding: 7px 37px 0 12px;
-    height: 40px;
+    align-items: center;
+    &::before,
+    &::after {
+      position: absolute;
+    }
+    &::before {
+      // box & bg
+      content: "";
+      border-color: var(--applied);
+      background-color: #aaa;
+      display: inline-block;
+      top: 10px;
+      right: 10px;
+      border-style: solid;
+      border-width: 0px;
+      transition: border-width 0.05s;
+      box-sizing: border-box;
+    }
+    &::after {
+      // checkmark
+      content: "";
+      display: inline-block;
+      border: none;
+      border-left: 3.5px solid #eee;
+      border-bottom: 3.5px solid #eee;
+      height: 7px;
+      width: 12px;
+      right: 14px;
+      top: 15px;
+      transform: rotate(-45deg) scale(0.75);
+      opacity: 0;
+      transform-origin: center;
+      transition: transform 0.1s;
+    }
   }
 `
 
@@ -226,15 +249,14 @@ const sliderWrap = css`
 `
 
 const numberInput = css`
+  border: 3px solid var(--bg-color);
+  color: var(--ex-fg-color);
+  background-color: var(--ex-bg-color);
   font-family: Theia;
   font-weight: 500;
   font-size: 15px;
-  height: 40px;
   margin-left: -2px;
-  border: 3px solid var(--bg-color);
   padding: 0 0 0 8px;
-  color: var(--ex-fg-color);
-  background-color: var(--ex-bg-color);
   border-radius: 0px;
   min-width: 45px;
   max-width: 50px;
@@ -267,7 +289,8 @@ export function getColorStyles(colors) {
       --bg-color: ${colors.bg[1]};
       --fg-color: ${colors.fg[1]};
     }
-    &:active {
+    &:active, 
+    &.active {
       --bg-color: ${colors.bg[2]};
       --fg-color: ${colors.fg[2]};
     }
@@ -286,7 +309,8 @@ export function getExtraColorStyles(colors) {
     &:focus-within {
       --mg-color: ${colors.mg[0]};
     }
-    &:active {
+    &:active, 
+    &.active {
       --mg-color: ${colors.mg[0]};
     }
     `
