@@ -1,40 +1,57 @@
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core' // eslint-disable-line
+import { css, jsx } from '@emotion/core'
+import { useState, useEffect } from 'react'
 import Label from './Label'
-import { sliderWrap, numberInput, subOption, closed, getColorStyles } from './controlStyles'
-// import './controls.scss'
+import { sliderWrap, numberInput, getColorStyles, getExtraColorStyles } from './controlStyles'
 
 export default ({
+  id,
   label,
-  value,
-  onChange,
-  onClick,
+  initialValue,
+  handler,
   range,
-  subordinate,
-  isClosed,
+  step = 1,
   colors,
-  dimensions = [40, 150],
+  dimensions = [36, 150],
 }) => {
+  const [currentNumber, setCurrentNumber] = useState(initialValue)
+
+  useEffect(() => {
+    setCurrentNumber(initialValue)
+    setCurrentNumber(initialValue)
+  }, [initialValue])
+
+  const handleChange = e => {
+    setCurrentNumber(e.target.value)
+    if(document.activeElement === document.getElementById(id)) {
+      setCurrentNumber(e.target.value)
+    }
+  }
   const colorStyles = colors
     ? getColorStyles(colors)
     : ''
+  const extraColorStyles = colors
+    ? getExtraColorStyles(colors)
+    : ''
+
   return (
     <div css={css`
       ${sliderWrap}
-      ${subordinate ? subOption : ""}
-      ${isClosed ? closed : ""}
+      ${colorStyles}
+      ${extraColorStyles}
     `}
     >
       <Label text={label} />
       <input
+        id={id}
         type="range"
-        defaultValue={value}
-        onChange={onChange}
-        onClick={onClick}
+        value={currentNumber}
+        onChange={handleChange}
+        onClick={handler}
         min={range[0]}
         max={range[1]}
+        step={step}
         css={css`
-          ${colorStyles}
           width:  ${dimensions[0]}px;
           height: ${dimensions[1]}px;
           &::-webkit-slider-thumb { height: ${dimensions[2] || dimensions[1]}px }
@@ -43,17 +60,13 @@ export default ({
       />
       <input
         type="number"
-        defaultValue={value}
-        onChange={onChange}
-        onClick={onClick}
-        onTouchEnd={onClick}
+        value={Math.round(currentNumber)}
+        onChange={handleChange}
+        onClick={handler}
         css={css`
-          ${colorStyles}
           ${numberInput}
           width:  ${dimensions[0]}px;
           height: ${dimensions[1] - 6}px;
-          &::-webkit-slider-thumb { height: ${dimensions[2] || dimensions[1]}px }
-          &::-moz-range-thumb { height: ${dimensions[2] || dimensions[1]}px }
         `}
       />
     </div>

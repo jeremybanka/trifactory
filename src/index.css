@@ -6,27 +6,27 @@
 
 @font-face {
   font-family: Theia;
-  src: url("./fonts/Theia-100.otf") format("opentype");
+  src: url("./fonts/Theia-100.woff") format("woff");
   font-weight: 100;
 }
 @font-face {
   font-family: Theia;
-  src: url("./fonts/Theia-200.otf") format("opentype");
+  src: url("./fonts/Theia-200.woff") format("woff");
   font-weight: 200;
 }
 @font-face {
   font-family: Theia;
-  src: url("./fonts/Theia-300.otf") format("opentype");
+  src: url("./fonts/Theia-300.woff") format("woff");
   font-weight: 300;
 }
 @font-face {
   font-family: Theia;
-  src: url("./fonts/Theia-400.otf") format("opentype");
+  src: url("./fonts/Theia-400.woff") format("woff");
   font-weight: 400;
 }
 @font-face {
   font-family: Theia;
-  src: url("./fonts/Theia-500.otf") format("opentype");
+  src: url("./fonts/Theia-500.woff") format("woff");
   font-weight: 500;
 }
 
@@ -40,6 +40,8 @@
 }
 
 body { 
+  background-color: #222;
   font-family: Theia;
   font-weight: 300; 
+  margin: 0;
 }

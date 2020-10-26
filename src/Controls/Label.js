@@ -11,12 +11,12 @@ export default ({ text }) => (
         transform: translateY(-10px) scaleY(0.9);
         opacity: 0;
         position: absolute;
-        top: -17px;
+        top: -11px;
         right: -2px;
         height: 25px;
         padding: 0 5px;
         background-color: var(--fg-color);
-        color: white;
+        color: var(--bg-color);
         font-size: 16px;
         font-weight: 500;
       `}
