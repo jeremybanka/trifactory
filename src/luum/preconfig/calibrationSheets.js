@@ -17,6 +17,27 @@ const hueRange = (a, z) => ({
   steps: tenths,
   prefer: 'sat',
 })
+const shadeRange = hue => ({
+  axes: [
+    {
+      attribute: 'hue',
+      from: hue,
+      to: hue,
+    },
+    {
+      attribute: 'sat',
+      from: 255,
+      to: 255,
+    },
+    {
+      attribute: 'lum',
+      from: 0,
+      to: 1,
+    },
+  ],
+  steps: dynamicRange,
+  prefer: 'lum',
+})
 
 export default {
   satLumTestAndRainbows: {
@@ -30,6 +51,7 @@ export default {
         hue: 120,
         sat: 255,
         lum: 0.50,
+        prefer: 'sat',
         gradients: [
           {
             axes: [
@@ -49,7 +71,7 @@ export default {
                 to: 1,
               },
             ],
-            steps: dynamicRange,
+            steps: tenths,
             prefer: 'lum',
           },
           {
@@ -60,7 +82,7 @@ export default {
                 from: 0,
               },
             ],
-            steps: dynamicRange,
+            steps: tenths,
             prefer: 'sat',
           },
         ],
@@ -87,6 +109,26 @@ export default {
         ],
       },
 
+      {
+        linkFromHues: 0,
+        hue: 0,
+        sat: 0,
+        lum: 0,
+        gradients: [
+          shadeRange(10),
+          shadeRange(20),
+          shadeRange(50),
+          shadeRange(80),
+          shadeRange(110),
+          shadeRange(140),
+          shadeRange(170),
+          shadeRange(200),
+          shadeRange(230),
+          shadeRange(260),
+          shadeRange(290),
+          shadeRange(320),
+        ],
+      },
     ],
   },
 }

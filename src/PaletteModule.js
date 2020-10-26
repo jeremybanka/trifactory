@@ -5,7 +5,7 @@ import { specToHex, gradientsToHexArrays } from './luum/export'
 import getOffset from './luum/getOffset'
 import getStandout from './luum/getStandout'
 // Controls
-import { SliderNumeric, TextField } from './Controls'
+import { Toggle, Slider, TextField } from './Controls'
 
 import {
   PaletteModule,
@@ -23,8 +23,8 @@ export default ({
   handleSetHues,
   handleSetColors,
 }) => {
-  const { hue, sat, lum } = color
-  const hex = specToHex({ hue, sat, lum, tuner })
+  const { hue, sat, lum, prefer } = color
+  const hex = specToHex({ hue, sat, lum, prefer, tuner })
   const [inputHex, setInputHex] = useState(hex.substr(1, 6))
 
   useEffect(() => {
@@ -32,12 +32,14 @@ export default ({
   }, [color, tuner])
 
   const importHexColor = input => {
+    debugger
+    console.log(input)
     const hex = validateHex.process(input)
     const { hue, sat, lum } = hexToSpec(hex)
     handleSetHues({ hue })
     handleSetColors([{ targetColorIdx: colorIdx, content: { hue, sat, lum } }])
   }
-  const handleSubmit = value => importHexColor(`#${value}`)
+  const handleSubmitHex = value => importHexColor(`#${value}`)
 
   const handleAdjustSpec = e => {
     const content = {}
@@ -48,24 +50,31 @@ export default ({
     handleSetColors([{ targetColorIdx: colorIdx, content }])
   }
 
+  const handleSetPrefer = e => {
+    console.log(e.target.value)
+    const content = {}
+    prefer === 'lum'
+      ? content.prefer = 'sat'
+      : content.prefer = 'lum'
+    handleSetColors([{ targetColorIdx: colorIdx, content }])
+  }
+
   const shade = lum => getOffset({
     hex,
     tuner,
     offsets: [{ attribute: 'lum', value: lum / -100 }],
   })
 
-  const colorSchemes = {
-    slider: {
-      exfg: getStandout(hex),
-      exbg: hex,
-      fg: [
-        getStandout(shade(10)),
-        getStandout(shade(5)),
-        getStandout(shade(15)),
-      ],
-      mg: [shade(20), shade(20), shade(20)],
-      bg: [shade(10), shade(5), shade(15)],
-    },
+  const colorScheme = {
+    exfg: getStandout(hex),
+    exbg: hex,
+    fg: [
+      getStandout(shade(10)),
+      getStandout(shade(5)),
+      getStandout(shade(15)),
+    ],
+    mg: [shade(20), shade(20), shade(20)],
+    bg: [shade(10), shade(5), shade(15)],
   }
 
   return (
@@ -75,41 +84,49 @@ export default ({
           frontMatter='#'
           passedValue={inputHex}
           validate={validateHex}
-          handleSubmit={handleSubmit}
+          handler={handleSubmitHex}
           dimensions={[100, 36]}
-          colors={colorSchemes.slider}
+          colorScheme={colorScheme}
         />
         <ControlStripSpacer />
-        <SliderNumeric
+        <Slider
           label="Hue"
           id='hue'
           handler={handleAdjustSpec}
           initialValue={hue}
           range={[0, 360]}
-          dimensions={[120, 36]}
-          colors={colorSchemes.slider}
+          dimensions={[150, 36]}
+          colorScheme={colorScheme}
+          numeric
         />
-        <SliderNumeric
-          label="Sat"
+        <Slider
+          label="Saturation"
           id='sat'
           handler={handleAdjustSpec}
           initialValue={sat}
           range={[0, 255]}
-          dimensions={[120, 36]}
-          colors={colorSchemes.slider}
+          dimensions={[150, 36]}
+          colorScheme={colorScheme}
+          numeric
         />
-        <SliderNumeric
-          label="Lum"
+        <Slider
+          label="Luminosity"
           id='lum'
           handler={handleAdjustSpec}
           initialValue={(lum * 100)}
           range={[0, 100]}
-          dimensions={[120, 36]}
-          colors={colorSchemes.slider}
+          dimensions={[150, 36]}
+          colorScheme={colorScheme}
+          numeric
+        />
+        <Toggle
+          id='prefer'
+          handler={handleSetPrefer}
+          checked={prefer === 'sat'}
         />
       </ControlStrip>
       {gradientsToHexArrays(color, tuner).map((hexGroup, hexGroupIdx) =>
-        <GradientRow key={`Color-${colorIdx}-hexGroup-${hexGroup}`}>
+        <GradientRow key={`Color-${colorIdx}-hexGroup-${hexGroupIdx}`}>
           {hexGroup.map((hex, hexIdx) =>
             <Swatch
               hex={hex}

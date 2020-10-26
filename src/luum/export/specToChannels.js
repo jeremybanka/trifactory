@@ -3,7 +3,7 @@ import {
   lumFromChannels,
   inherentLumFromHue,
   maxSatForHueFromTuner,
-} from '../deductions'
+} from '../solveFor'
 import funnel from '../utils/funnel'
 
 export default ({ hue, sat, lum, prefer = 'sat', tuner }) => {

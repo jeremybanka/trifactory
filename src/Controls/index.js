@@ -1,9 +1,11 @@
 import TextField from './TextField'
+import Toggle from './Toggle'
 import Panel from './Panel'
-import SliderNumeric from './SliderNumeric'
+import Slider from './Slider'
 
 export {
   TextField,
+  Toggle,
   Panel,
-  SliderNumeric,
+  Slider,
 }

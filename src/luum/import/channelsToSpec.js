@@ -2,7 +2,7 @@ import {
   hueFromChannels,
   satFromChannels,
   lumFromChannels,
-} from "../deductions"
+} from "../solveFor"
 
 export default ({ R, G, B }) => {
   const hue = hueFromChannels({ R, G, B })

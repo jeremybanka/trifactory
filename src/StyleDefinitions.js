@@ -45,5 +45,5 @@ height: 36px;
 `
 export const ControlStripSpacer = styled.div`
 flex-grow: 1;
-  & ~ * { align-self: flex-end; }
+& ~ * { align-self: flex-end; }
 `
