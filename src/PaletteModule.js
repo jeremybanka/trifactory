@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 // luum
 import {
+  hardContrast,
+  softContrast,
   hexToSpec,
   specToHex,
   gradientsToHexArrays,
@@ -54,28 +56,54 @@ export default ({
   const handleSetPrefer = e => {
     console.log(e.target.value)
     const content = {}
-    prefer === 'lum'
-      ? content.prefer = 'sat'
-      : content.prefer = 'lum'
+    prefer === 'sat'
+      ? content.prefer = 'lum'
+      : content.prefer = 'sat'
     handleSetColors([{ targetColorIdx: colorIdx, content }])
   }
 
   const shade = lum => getOffset({
     hex,
     tuner,
-    offsets: [{ attribute: 'lum', value: lum / -100 }],
+    offsets: [{ attribute: 'lum', offsetValue: lum / -100 }],
   })
 
+  const cc = {
+    hardContrast: hardContrast(hex),
+    softContrast: softContrast(hex, tuner),
+  }
+
   const colorScheme = {
-    exfg: getStandout(hex),
+    exfg: cc.softContrast,
     exbg: hex,
-    fg: [
-      getStandout(shade(10)),
-      getStandout(shade(5)),
-      getStandout(shade(15)),
-    ],
-    mg: [shade(20), shade(20), shade(20)],
-    bg: [shade(10), shade(5), shade(15)],
+    fg: [cc.softContrast, cc.softContrast, cc.hardContrast],
+    mg: [20, 15, 25].map(n => shade(n)),
+    bg: [10, 5, 15].map(n => shade(n)),
+  }
+
+  const cs = hex => {
+    const shade = lum => getOffset({
+      hex,
+      tuner,
+      offsets: [{ attribute: 'lum', offsetValue: lum / -100 }],
+    })
+    return ({
+      n: {
+        fg: softContrast(hex, tuner),
+        mg: shade(20),
+        bg: shade(10),
+      },
+      f: {
+        fg: softContrast(hex, tuner),
+        mg: shade(15),
+        bg: shade(5),
+      },
+      a: {
+        fg: hardContrast(hex, tuner),
+        mg: shade(25),
+        bg: shade(15),
+      },
+    })
   }
 
   return (
@@ -121,13 +149,28 @@ export default ({
           numeric
         />
         <Toggle
-          id='prefer'
+          id={`prefer-color-${colorIdx}`}
           handler={handleSetPrefer}
           checked={prefer === 'sat'}
+          colorScheme={colorScheme}
+          templateName='title-left'
+        />
+      </ControlStrip>
+      <ControlStrip>
+        <ControlStripSpacer />
+        <Toggle
+          id={`prefer-color-${colorIdx}-flip`}
+          type='switch'
+          handler={handleSetPrefer}
+          checked={prefer === 'sat'}
+          colorScheme={colorScheme}
         />
       </ControlStrip>
       {gradientsToHexArrays(color, tuner).map((hexGroup, hexGroupIdx) =>
-        <GradientRow key={`Color-${colorIdx}-hexGroup-${hexGroupIdx}`}>
+        <GradientRow
+          key={`Color-${colorIdx}-hexGroup-${hexGroupIdx}`}
+          shadeRange={colorIdx === 2}
+        >
           {hexGroup.map((hex, hexIdx) =>
             <Swatch
               hex={hex}

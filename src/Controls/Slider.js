@@ -2,7 +2,7 @@
 import { css, jsx } from '@emotion/core'
 import { useState, useEffect } from 'react'
 import Label from './Label'
-import { sliderWrap, numberInput, getColorStyles, getExtraColorStyles } from './controlStyles'
+import { cssCoreSlider, numberInput, getCssVarsColor } from './controlStyles'
 
 export default ({
   id,
@@ -21,7 +21,6 @@ export default ({
   const [shiftIsHeld, setShiftIsHeld] = useState(false)
 
   useEffect(() => {
-    setValue(initialValue)
     setValue(initialValue)
   }, [initialValue])
 
@@ -53,19 +52,12 @@ export default ({
       default:
     }
   }
-  const colorStyles = colorScheme
-    ? getColorStyles(colorScheme)
-    : ''
-  const extraColorStyles = colorScheme
-    ? getExtraColorStyles(colorScheme)
-    : ''
-
+  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
   return (
     <div
       css={css`
-        ${sliderWrap}
-        ${colorStyles}
-        ${extraColorStyles}
+        ${cssCoreSlider}
+        ${cssVarsColor}
       `}
       className={enterIsHeld ? 'active' : ''}
     >

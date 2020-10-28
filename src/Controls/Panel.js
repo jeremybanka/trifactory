@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { keyStyle, getColorStyles } from './controlStyles'
+import { cssCorePanel, getCssVarsColor } from './controlStyles'
 
 export default ({
   children,
@@ -9,15 +9,13 @@ export default ({
   colorScheme,
   dimensions = [100, 100],
 }) => {
-  const customColorStyles = colorScheme
-    ? getColorStyles(colorScheme)
-    : ''
+  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
   return (
     <div
       onClick={onClick}
       css={css`
-        ${keyStyle};
-        ${customColorStyles};
+        ${cssCorePanel};
+        ${cssVarsColor};
         height: ${dimensions[1]}px;
         width: ${dimensions[0]}px;
         align-items: center;

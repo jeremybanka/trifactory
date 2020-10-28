@@ -6,9 +6,9 @@ text-align: center;
 min-height: calc(100vh - 10vw + 40px);
 width: 100vw;
 padding: calc(5vw - 20px) 0;
-  > div + div { margin-top: calc(5vw - 20px); }
+> * + * { margin-top: calc(5vw - 20px); }
 `
-export const PaletteModule = styled.div`
+export const PaletteModule = styled.section`
 display: block;
 width: 90vw;
 margin: auto;
@@ -17,12 +17,13 @@ background: ${props => props.hex};
 transition-property: background;
 transition-duration: 0.2s;
 transition-timing-function: initial;
+> * + * { margin-top: 10px; }
 `
 export const GradientRow = styled.div`
 display: inline-flex;
 width: 100%;
 height: 100px;
-margin-top: 10px;
+margin-bottom: ${props => props.shadeRange ? `-10px` : `0px`}
 `
 export const Swatch = styled.div`
 font-family: Theia;
@@ -31,8 +32,10 @@ flex-grow: 1;
 height: 100px;
 background: ${props => props.hex};
 transition-property: all;
-transition-duration: 2s;
+transition-duration: .2s;
 transition-timing-function: initial;
+align-items: center;
+justify-content: center;
 `
 export const Icon = styled.div`
 font-family: Delve;
@@ -45,5 +48,4 @@ height: 36px;
 `
 export const ControlStripSpacer = styled.div`
 flex-grow: 1;
-& ~ * { align-self: flex-end; }
 `

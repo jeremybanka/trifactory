@@ -1,22 +1,23 @@
 import { css } from '@emotion/core'
 
-const keyStyle = css`
-  font-family: Theia;
+export const cssCorePanel = css`
   user-select: none;
   cursor: pointer;
   --bg-color: #ddd;
+  --md-color: #aaa;
   --fg-color: #555;
   color: var(--fg-color);
   background-color: var(--bg-color);
-  font-weight: 600;
+  position: relative;
+  display: inline-flex;
+  font-family: Theia;
+  font-weight: 500;
   font-size: 16px;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
   transition: box-shadow transform background-color;
   transition-duration: 0.1s;
   transition-timing-function: ease-in;
   transform-origin: center center;
-  position: relative;
-  display: inline-flex;
   &:hover, 
   &:focus,
   &:focus-within {
@@ -32,75 +33,53 @@ const keyStyle = css`
     transition-duration: 0.03s;
   }
 `
-const toggleWrap = css` 
-  &:hover label, 
-  &:focus label {
-    &::before { border-width: 2px }
+export const cssCoreCheck = css` 
+  ${cssCorePanel};
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  &:hover > .box, 
+  &:focus > .box { 
+    border-width: 2px 
   }
-  &:active, 
-  &.active label {
-    transition-property: box-shadow; 
-    // make everything except the box shadow 'snap'
-    &::before {
-      border-width: 10px;
-      // fill the box
-    }
-  }
-  input[type=checkbox] { 
-    // the box itself is actually hidden
-    position: absolute;
+  input[type=checkbox] { // hide the box itself
+    grid-area: status;
     opacity: 0;
-    margin-right: -30px;
-    &:checked + label {
-      &::after {
-        transform: rotate(-45deg) scale(1);
-        opacity: 1;
-      }
+    margin: 0px;
+    &:checked ~ .check {
+      transform: rotate(-45deg) scale(1);
+      opacity: 1;
     }
   }
-  // the label is what people see and click
-  label { 
-    ${keyStyle};
-    white-space: nowrap;
+  .box, .check, .title { 
+    pointer-events: none;
+  }
+  .box, .check { 
+    grid-area: status;
+  }
+  .title {
+    grid-area: label;
+    display: inline-flex;
     align-items: center;
-    &::before,
-    &::after {
-      position: absolute;
-    }
-    &::before {
-      // box & bg
-      content: "";
-      border-color: var(--applied);
-      background-color: #aaa;
-      display: inline-block;
-      top: 10px;
-      right: 10px;
-      border-style: solid;
-      border-width: 0px;
-      transition: border-width 0.05s;
-      box-sizing: border-box;
-    }
-    &::after {
-      // checkmark
-      content: "";
-      display: inline-block;
-      border: none;
-      border-left: 3.5px solid #eee;
-      border-bottom: 3.5px solid #eee;
-      height: 7px;
-      width: 12px;
-      right: 14px;
-      top: 15px;
-      transform: rotate(-45deg) scale(0.75);
-      opacity: 0;
-      transform-origin: center;
-      transition: transform 0.1s;
-    }
+    white-space: nowrap;
   }
+  .box {
+    background-color: var(--ex-bg-color);
+    border-color: var(--fg-color);
+    border-style: solid;
+    border-width: 0px;
+    box-sizing: border-box;
+    transition: border-width 0.05s;
+  }
+  .check {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.75);
+    transform-origin: center;
+    transition: transform 0.1s;
+ }
 `
-
-const dropdownWrap = css`
-  ${keyStyle};
+export const dropdownWrap = css`
+  ${cssCorePanel};
   width: 158px;
   padding-left: 9px;
   &::after {
@@ -126,10 +105,9 @@ const dropdownWrap = css`
     }
   }
 `
-
-const sliderWrap = css`
-  ${keyStyle};
-  display:flex;
+export const cssCoreSlider = css`
+  ${cssCorePanel};
+  align-items: center;
   &:hover,
   &:focus,
   &:focus-within {
@@ -138,17 +116,6 @@ const sliderWrap = css`
       transform: translateY(-15px) scaleY(1);
       opacity: 1;
     }
-  }
-  -webkit-appearance: none;
-  cursor: pointer;
-  appearance: none;
-  background: var(--bg-color);
-  outline: none;
-  border-radius: 0;
-  align-items: center;
-  &:hover,
-  &:focus,
-  &:focus-within{
     &::-webkit-slider-thumb {
       transform: scaleX(0.25) scaleY(1.05);
       background: var(--fg-color);
@@ -160,25 +127,32 @@ const sliderWrap = css`
     }
   }
   input[type=range] {
+    cursor: grab;
+    appearance: none;
+    background: var(--bg-color);
+    outline: none;
+    border-radius: 0;
+    margin: 0;
+    align-items: center;
     &::-webkit-slider-thumb {
       -webkit-appearance: none; /* Override default look */
       border: none;
       appearance: none;
       width: 20px; /* Set a specific slider handle width */
-      background: #888;
-      cursor: pointer;
+      background: var(--mg-color);
+      cursor: grab;
       transition: transform 0.05s;
     }
     &::-moz-range-thumb {
       border-radius: 0px;
       width: 20px;
-      background: #888;
-      cursor: pointer;
+      background: var(--mg-color);
+      cursor: grab;
       transition: transform 0.05s;
     }
     &::before,
     &::after {
-      color: #888;
+      color: var(--mg-color);
       display: flex;
       font-size: 24px;
       height: 1em;
@@ -192,14 +166,6 @@ const sliderWrap = css`
       font-family: Theia;
       content: "+";
     }
-    -webkit-appearance: none;
-    cursor: pointer;
-    appearance: none;
-    background: var(--bg-color);
-    outline: none;
-    border-radius: 0;
-    margin: 0;
-    align-items: center;
     &:hover,
     &:focus {
       &::-webkit-slider-thumb {
@@ -219,14 +185,12 @@ const sliderWrap = css`
       appearance: none;
       width: 20px; /* Set a specific slider handle width */
       background: var(--mg-color);
-      cursor: pointer;
       transition: transform 0.05s;
     }
     &::-moz-range-thumb {
       border-radius: 0px;
       width: 20px;
       background: var(--mg-color);
-      cursor: pointer;
       transition: transform 0.05s;
     }
     &::before,
@@ -247,8 +211,7 @@ const sliderWrap = css`
     }
   }
 `
-
-const numberInput = css`
+export const numberInput = css`
   border: 3px solid var(--bg-color);
   color: var(--ex-fg-color);
   background-color: var(--ex-bg-color);
@@ -267,62 +230,46 @@ const numberInput = css`
     outline: none;
   }
 `
-
-const subOption = css`
-  transition-property: flex transform box-shadow background-color;
-  overflow: hidden;
-  --bg-color: #ccc;
-`
-
-const closed = css`
-  display:none
-`
-
-export function getColorStyles(colors) {
+export function getCssVarsColor(colors) {
   return (
     css`
+    --ex-fg-color: ${colors.exfg};
+    --ex-bg-color: ${colors.exbg};
     --bg-color: ${colors.bg[0]};
+    --mg-color: ${colors.mg[0]};
     --fg-color: ${colors.fg[0]};
     &:hover, 
     &:focus,
     &:focus-within {
       --bg-color: ${colors.bg[1]};
+      --mg-color: ${colors.mg[1]};
       --fg-color: ${colors.fg[1]};
     }
     &:active, 
     &.active {
       --bg-color: ${colors.bg[2]};
+      --mg-color: ${colors.mg[2]};
       --fg-color: ${colors.fg[2]};
     }
     `
   )
 }
-
-export function getExtraColorStyles(colors) {
-  return (
-    css`
-    --ex-fg-color: ${colors.exfg};
-    --ex-bg-color: ${colors.exbg};
-    --mg-color: ${colors.mg[0]};
-    &:hover, 
-    &:focus,
-    &:focus-within {
-      --mg-color: ${colors.mg[0]};
-    }
-    &:active, 
-    &.active {
-      --mg-color: ${colors.mg[0]};
-    }
-    `
-  )
-}
-
-export {
-  keyStyle,
-  dropdownWrap,
-  sliderWrap,
-  numberInput,
-  toggleWrap,
-  subOption,
-  closed,
+export const getCssGridTemplate = (templateName, y) => {
+  switch(templateName) {
+    case 'icon-card': return css`grid-template:
+      [row1-start] "magnitude   title       close       " 76px [row1-end]
+      [row2-start] "magnitude   traits      traits      " 24px [row1-end]
+      [row3-start] "left        right       right       " auto [row2-end]
+      /             120px       auto        45px;
+      `
+    case 'title-left': return css`grid-template:
+      [row1-start] "null      label     status    " ${y}px [row1-end]
+      /             10px      auto      ${y}px
+      `
+    case 'title-right':
+    default: return css`grid-template:
+      [row1-start] "status    label     null      " ${y}px [row1-end]
+      /             ${y}px    auto      10px
+      `
+  }
 }

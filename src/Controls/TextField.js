@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { keyStyle, getColorStyles, getExtraColorStyles } from './controlStyles'
+import { cssCorePanel, getCssVarsColor } from './controlStyles'
 import { Icon } from '../StyleDefinitions'
 import Label from './Label'
 import { Panel } from '.' // eslint-disable-line
@@ -55,26 +55,20 @@ export default ({
 
   const labelContent = 'Hexcode'
 
-  const colorStyles = colorScheme
-    ? getColorStyles(colorScheme)
-    : ''
-  const extraColorStyles = colorScheme
-    ? getExtraColorStyles(colorScheme)
-    : ''
+  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
 
   return (
     <div
       css={css`
-        ${keyStyle}
-        ${colorStyles}
-        ${extraColorStyles}
+        ${cssCorePanel}
+        ${cssVarsColor}
       `}
       className={enterIsHeld ? 'active' : ''}
     >
       {frontMatter &&
         <div
           css={css`
-            ${colorStyles};
+            ${cssVarsColor};
             display: flex;
             height: 36px;
             font-size: 20px;
@@ -95,7 +89,7 @@ export default ({
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
         css={css`
-          ${colorStyles};
+          ${cssVarsColor};
           width:  ${dimensions[0]}px;
           height: ${dimensions[1]}px;
           color: var(--fg-color);
