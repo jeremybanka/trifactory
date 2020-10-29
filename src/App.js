@@ -26,7 +26,6 @@ export default () => {
     }
     setColors(newColors)
   }
-
   const getColorChangesFromHueUpdate = () => {
     const changes = []
     for(let index = 0; index < colors.length; index++) {
@@ -40,7 +39,6 @@ export default () => {
     }
     return changes
   }
-
   const handleSetHues = ({
     paletteMode = hues.paletteMode || 'none',
     primeHue = hues.list[0] || 0,

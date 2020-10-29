@@ -33,6 +33,19 @@ export const cssCorePanel = css`
     transition-duration: 0.03s;
   }
 `
+export const cssCorePanel90 = css`
+  ${cssCorePanel}
+  transform: rotate(-90deg);
+  &:hover, 
+  &:focus,
+  &:focus-within {
+    transform: rotate(-90deg) scale(1.02);
+  }
+  &:active, 
+  &.active {
+    transform: rotate(-90deg)scale(0.98);
+  }
+`
 export const cssCoreCheck = css` 
   ${cssCorePanel};
   display: grid;
@@ -43,6 +56,7 @@ export const cssCoreCheck = css`
     border-width: 2px 
   }
   input[type=checkbox] { // hide the box itself
+    cursor: pointer;
     grid-area: status;
     opacity: 0;
     margin: 0px;

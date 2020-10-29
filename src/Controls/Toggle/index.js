@@ -4,8 +4,8 @@ import Switch from './Switch'
 
 export default function Toggle({
   id,
-  label = 'Prefer Sat.',
-  checked,
+  label,
+  checkProvided,
   handler,
   type,
   dimensions,
@@ -17,7 +17,7 @@ export default function Toggle({
       <Switch
         id={id}
         label={label}
-        checked={checked}
+        checkProvided={checkProvided}
         handler={handler}
         dimensions={dimensions}
         templateName={templateName}
@@ -28,7 +28,7 @@ export default function Toggle({
       <Button
         id={id}
         label={label}
-        checked={checked}
+        checkProvided={checkProvided}
         handler={handler}
         dimensions={dimensions}
         templateName={templateName}

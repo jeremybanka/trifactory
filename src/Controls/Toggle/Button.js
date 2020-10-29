@@ -5,7 +5,7 @@ import { getCssVarsColor, getCssGridTemplate, cssCoreCheck } from '../controlSty
 export default function TogglePress({
   id,
   label = 'Label',
-  checked,
+  checkProvided,
   handler,
   dimensions: [x, y] = [null, 36], // 36 is min/default height
   templateName,
@@ -53,7 +53,7 @@ export default function TogglePress({
       <input
         id={id}
         type="checkbox"
-        checked={checked}
+        checked={checkProvided}
         onChange={handler}
       />
       <div className='title'>{label}</div>

@@ -7,19 +7,19 @@ import {
   specToHex,
   gradientsToHexArrays,
   getOffset,
-  getStandout,
   validateHex,
 } from 'luum'
 // Controls
 import { Toggle, Slider, TextField } from './Controls'
-
+// Structure
 import {
   PaletteModule,
   GradientRow,
-  Swatch,
   ControlStrip,
   ControlStripSpacer,
 } from './StyleDefinitions'
+// Children
+import Swatch from './Swatch'
 
 export default ({
   tuner,
@@ -53,8 +53,7 @@ export default ({
     handleSetColors([{ targetColorIdx: colorIdx, content }])
   }
 
-  const handleSetPrefer = e => {
-    console.log(e.target.value)
+  const handleSetPrefer = () => {
     const content = {}
     prefer === 'sat'
       ? content.prefer = 'lum'
@@ -62,46 +61,53 @@ export default ({
     handleSetColors([{ targetColorIdx: colorIdx, content }])
   }
 
+  // COLOR CONTEXT ARCHITECTURE CURRENT REVISION
   const shade = lum => getOffset({
     hex,
     tuner,
     offsets: [{ attribute: 'lum', offsetValue: lum / -100 }],
   })
 
-  const cc = {
+  const colorContext = {
     hardContrast: hardContrast(hex),
     softContrast: softContrast(hex, tuner),
   }
 
   const colorScheme = {
-    exfg: cc.softContrast,
+    exfg: colorContext.softContrast,
     exbg: hex,
-    fg: [cc.softContrast, cc.softContrast, cc.hardContrast],
+    fg: [colorContext.softContrast, colorContext.softContrast, colorContext.hardContrast],
     mg: [20, 15, 25].map(n => shade(n)),
     bg: [10, 5, 15].map(n => shade(n)),
   }
 
-  const cs = hex => {
+  // COLOR CONTEXT ARCHITECTURE WIP
+  const colorSchemeDraft = hex => {
     const shade = lum => getOffset({
       hex,
       tuner,
       offsets: [{ attribute: 'lum', offsetValue: lum / -100 }],
     })
     return ({
-      n: {
+      neutral: {
         fg: softContrast(hex, tuner),
         mg: shade(20),
         bg: shade(10),
       },
-      f: {
+      focus: {
         fg: softContrast(hex, tuner),
         mg: shade(15),
         bg: shade(5),
       },
-      a: {
+      active: {
         fg: hardContrast(hex, tuner),
         mg: shade(25),
         bg: shade(15),
+      },
+      disabled: {
+        fg: shade(30),
+        mg: shade(15),
+        bg: shade(5),
       },
     })
   }
@@ -150,8 +156,9 @@ export default ({
         />
         <Toggle
           id={`prefer-color-${colorIdx}`}
+          label='Prefer Sat.'
           handler={handleSetPrefer}
-          checked={prefer === 'sat'}
+          checkProvided={prefer === 'sat'}
           colorScheme={colorScheme}
           templateName='title-left'
         />
@@ -162,8 +169,9 @@ export default ({
           id={`prefer-color-${colorIdx}-flip`}
           type='switch'
           handler={handleSetPrefer}
-          checked={prefer === 'sat'}
+          checkProvided={prefer === 'sat'}
           colorScheme={colorScheme}
+          dimensions={[40, 24]}
         />
       </ControlStrip>
       {gradientsToHexArrays(color, tuner).map((hexGroup, hexGroupIdx) =>
@@ -174,8 +182,9 @@ export default ({
           {hexGroup.map((hex, hexIdx) =>
             <Swatch
               hex={hex}
+              importHexColor={importHexColor}
               key={`Color-${colorIdx}-Row-${hexGroupIdx}-Swa-${hexIdx}`}
-            ><div onClick={() => importHexColor(hex)}>{hex}</div></Swatch>
+            />
           )}
         </GradientRow>
       )}

@@ -5,42 +5,72 @@ import { getCssVarsColor, cssCorePanel } from '../controlStyles'
 
 export default function ToggleFlip({
   id,
-  checked,
+  checkProvided,
   handler,
   dimensions: [x, y] = [64, 36],
   colorScheme,
 }) {
   const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
-  const [switchPosition, setSwitchPosition] = useState(checked ? 100 : 0)
+  const [checked, setChecked] = useState(checkProvided)
+  const [initialSwitchPosition, setInitialSwitchPosition] = useState(checkProvided ? 100 : 0)
+  const [switchPosition, setSwitchPosition] = useState(checkProvided ? 100 : 0)
+  const [actionIsDrag, setActionIsDrag] = useState(false)
 
   useEffect(() => {
-    setSwitchPosition(checked ? 100 : 0)
-  }, [checked])
+    setSwitchPosition(checkProvided ? 100 : 0)
+    setChecked(checkProvided)
+  }, [checkProvided])
 
-  const handleSetSwitchPosition = e => {
-    setSwitchPosition(e.target.value)
+  const handleSetInitialSwitchPosition = () => {
+    setInitialSwitchPosition(switchPosition)
   }
+  const handleSetSwitchPosition = e => {
+    const newPosition = e.target.value
+    if(newPosition !== initialSwitchPosition && !actionIsDrag) setActionIsDrag(true)
+    setSwitchPosition(newPosition)
+  }
+  const resolveEvent = e => {
+    const resolvedSwitchPosition = actionIsDrag
+      ? switchPosition > 50 ? 100 : 0
+      : initialSwitchPosition > 50 ? 0 : 100
+    setSwitchPosition(resolvedSwitchPosition)
+    if(initialSwitchPosition !== resolvedSwitchPosition) handler(e)
+    setActionIsDrag(false)
+  }
+
   return (
-    <label
-      htmlFor={id}
+    <div
+      id={id}
+      onMouseDown={handleSetInitialSwitchPosition}
+      onTouchStart={handleSetInitialSwitchPosition}
+      onMouseUp={resolveEvent}
+      onTouchEnd={resolveEvent}
       css={css`
         ${cssCorePanel}
+        ${cssVarsColor}
         display: grid;
         align-items: center;
         justify-items: center;
         grid-template:
-          [row1-start] "checkbox  switch    " ${y}px [row1-end]
-          /             0px       ${x}px;
+          [row1-start] "switch    " ${y}px [row1-end]
+          /             ${x}px;
+        * { cursor: pointer; }
         input[type=checkbox] {
           grid-area: switch;
+          opacity: 0;
           height: ${y}px;
-          width:  ${y}px;
+          width:  ${x}px;
+          &:checked ~ .switch > .track { 
+            background-color: var(--fg-color);
+            > .handle {
+              background-color: var(--ex-bg-color);
+            }
+          }
         }
         input[type=range] {
           height: ${y}px;
           width:  ${x}px;
           margin: 0px;
-          cursor: grab;
           grid-area: switch;
           -webkit-appearance: none;
           appearance: none;
@@ -52,47 +82,40 @@ export default function ToggleFlip({
             border: none;
             height: ${y}px;
             width:  ${y}px;
-            background: var(--mg-color);
+            background: red;
             transition: transform 0.05s;
+            opacity: 0;
           }
           &::-moz-range-thumb {
             border-radius: 0px;
             width: 20px;
-            background: var(--mg-color);
-            cursor: grab;
+            background: red;
             transition: transform 0.05s;
           }
         }
-        .switch-ex {
+        .switch {
+          pointer-events: none;
           grid-area: switch;
           overflow: hidden;
           height: ${y}px;
           width:  ${x}px;
-          .switch-in {
-            transition-property: margin;
+          .track {
+            display: flex;
+            justify-content: center;
+            transition-property: all;
             transition-duration: 0.1s;
             transition-timing-function: ease-out;
-            pointer-events: none;
             height: ${y}px;
-            width:  ${2 * x - y}px;
-            margin-left: ${-1 * (x - y) + (x - y) * (switchPosition / 100)}px;
-            .active, 
-            .handle,
-            .inactive {
-              height: ${y}px;
-              display: inline-block;
-            }
-            .active {
-              background-color: #00ff00aa;
-              width:  ${x - y}px;
-            }
+            width:  ${2 * x + y}px;
+            margin-left: ${-1 * x + (x - y) * (switchPosition / 100)}px;
+            background-color: var(--mg-color);
+            //   0 -> -x
+            // 100 -> -y
             .handle {
-              background-color: #000000aa;
-              width:  ${y}px;
-            }
-            .inactive {
-              background-color: #ff0000aa;
-              width:  ${x - y}px;
+              width:  ${y - 4}px;
+              height: ${y - 4}px;
+              background: var(--ex-bg-color);
+              margin: 2px;
             }
           }
         }
@@ -100,7 +123,6 @@ export default function ToggleFlip({
     >
       <input
         type="checkbox"
-        id={id}
         checked={checked}
         onChange={handler}
       />
@@ -108,17 +130,14 @@ export default function ToggleFlip({
         type="range"
         value={switchPosition}
         onChange={handleSetSwitchPosition}
-        onClick={handler}
         min={0}
         max={100}
       />
-      <div className='switch-ex'>
-        <div className='switch-in'>
-          <div className='active' />
+      <div className='switch'>
+        <div className='track'>
           <div className='handle' />
-          <div className='inactive' />
         </div>
       </div>
-    </label>
+    </div>
   )
 }
