@@ -8,7 +8,7 @@ width: 100vw;
 padding: calc(5vw - 20px) 0;
 > section + section { margin-top: calc(5vw - 20px); }
 `
-export const PaletteModule = styled.section`
+export const PaletteModuleWrapper = styled.section`
 display: block;
 width: 90vw;
 margin: auto;

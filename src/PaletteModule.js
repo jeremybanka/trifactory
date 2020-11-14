@@ -7,14 +7,14 @@ import {
   gradientsToHexArrays,
   validateHex,
   scheme,
-  templates,
+  schemes,
   specToHexFixLimit,
 } from 'luum'
 // Controls
 import { Toggle, Slider, TextField } from './Controls'
 // Structure
 import {
-  PaletteModule,
+  PaletteModuleWrapper,
   GradientRow,
   ControlStrip,
   ControlStripSpacer,
@@ -33,12 +33,12 @@ export default ({
   const { hue, sat, lum, prefer } = color
   const [previewColor, setPreviewColor] = useState(color)
   const preview = specToHexFixLimit({ ...previewColor, tuner })
-  const { hex, limit } = specToHexFixLimit({ hue, sat, lum, prefer, tuner })
+  const hex = specToHex({ hue, sat, lum, prefer, tuner })
   const [inputHex, setInputHex] = useState(hex.substr(1, 6))
 
-  const controlScheme = css`${scheme({
+  const controlPalette = css`${scheme({
     hexes: [hex],
-    scheme: templates.trifactory,
+    scheme: schemes.trifactory,
     tuner,
   }).Control}`
 
@@ -83,7 +83,7 @@ export default ({
   }
 
   return (
-    <PaletteModule hex={hex} className="PaletteModule">
+    <PaletteModuleWrapper hex={hex} className="PaletteModule">
       <PreviewArea hex={preview.hex}>
         <div onClick={confirmPreview} />
       </PreviewArea>
@@ -94,7 +94,7 @@ export default ({
           handler={handleSubmitHex}
           frontMatter='#'
           dimensions={{ fieldWidth: 100 }}
-          injectCSS={controlScheme}
+          injectCSS={controlPalette}
         />
         <ControlStripSpacer />
         <Slider
@@ -104,7 +104,7 @@ export default ({
           valueProvided={previewColor.hue}
           range={[0, 360]}
           dimensions={sliderDimensions}
-          injectCSS={controlScheme}
+          injectCSS={controlPalette}
           numeric
         />
         <Slider
@@ -115,7 +115,7 @@ export default ({
           range={[0, 255]}
           limit={preview.limit.sat}
           dimensions={sliderDimensions}
-          injectCSS={controlScheme}
+          injectCSS={controlPalette}
           numeric
         />
         <Slider
@@ -126,7 +126,7 @@ export default ({
           range={[0, 100]}
           limit={preview.limit.lum.map(lum => lum * 100)}
           dimensions={sliderDimensions}
-          injectCSS={controlScheme}
+          injectCSS={controlPalette}
           numeric
         />
         <Toggle
@@ -134,7 +134,7 @@ export default ({
           labelText='Prefer Sat.'
           handler={handleSetPrefer}
           toggleStateProvided={prefer === 'sat'}
-          injectCSS={controlScheme}
+          injectCSS={controlPalette}
           layout='title-left'
         />
       </ControlStrip>
@@ -145,7 +145,7 @@ export default ({
           type='switch'
           handler={handleSetPrefer}
           toggleStateProvided={prefer === 'sat'}
-          injectCSS={controlScheme}
+          injectCSS={controlPalette}
         />
       </ControlStrip>
       {gradientsToHexArrays(color, tuner).map((hexGroup, hexGroupIdx) =>
@@ -162,6 +162,6 @@ export default ({
           )}
         </GradientRow>
       )}
-    </PaletteModule>
+    </PaletteModuleWrapper>
   )
 }
