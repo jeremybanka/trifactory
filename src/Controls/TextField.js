@@ -1,28 +1,31 @@
 import { useState, useEffect } from 'react'
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { cssCorePanel, getCssVarsColor } from './controlStyles'
 import { Icon } from '../StyleDefinitions'
 import Label from './Label'
-import { Panel } from '.' // eslint-disable-line
+import Panel from './Panel'
+import { textFieldCSS } from './css'
 
-export default ({
-  frontMatter,
-  passedValue,
+const defaultDimensions =
+{ height: 36,
+  fieldWidth: 150 }
+
+export default function TextField({
+  valueProvided,
   validate,
   handler,
-  colorScheme,
-  buttonColorScheme = colorScheme,
-  dimensions = [150, 36],
-}) => {
-  const [value, setValue] = useState(passedValue)
+  frontMatter,
+  dimensions,
+  injectCSS,
+  buttonInjectCSS = injectCSS,
+}) {
+  const [value, setValue] = useState(valueProvided)
   const [valueIsAcceptable, setValueIsAcceptable] = useState(false)
   const [enterIsHeld, setEnterIsHeld] = useState(false)
 
-  useEffect(() => {
-    setValue(passedValue)
-    setValue(passedValue)
-  }, [passedValue])
+  const { height, fieldWidth } = { ...defaultDimensions, ...dimensions }
+
+  useEffect(() => { setValue(valueProvided) }, [valueProvided])
 
   const handleSetValue = e => {
     const maxLength = validate.acceptLengths[0]
@@ -55,32 +58,18 @@ export default ({
 
   const labelContent = 'Hexcode'
 
-  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
-
   return (
     <div
-      css={css`
-        ${cssCorePanel}
-        ${cssVarsColor}
-      `}
       className={enterIsHeld ? 'active' : ''}
+      css={css`
+        ${textFieldCSS}
+        ${injectCSS}
+        height: ${height}px;
+      `}
     >
-      {frontMatter &&
-        <div
-          css={css`
-            ${cssVarsColor};
-            display: flex;
-            height: 36px;
-            font-size: 20px;
-            border: none;
-            padding-left: 10px;
-            align-items: center;
-            cursor: default;
-          `}
-        >
-          {frontMatter}
-        </div>
-      }
+      {frontMatter && <div className='front-matter'>
+        {frontMatter}
+      </div>}
       <Label text={labelContent} />
       <input
         type="text"
@@ -88,26 +77,12 @@ export default ({
         onChange={handleSetValue}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
-        css={css`
-          ${cssVarsColor};
-          width:  ${dimensions[0]}px;
-          height: ${dimensions[1]}px;
-          color: var(--fg-color);
-          background: none;
-          font-family: Theia;
-          display: flex;
-          font-size: 20px;
-          border: none;
-          padding: 0 10px;
-          box-shadow: 0 0 0 0px -moz-mac-focusring;
-          outline: none;
-        `}
+        css={css`width: ${fieldWidth}px;`}
       />
       <Panel
-        label=''
         onClick={handleButtonPress}
-        dimensions={[dimensions[1], dimensions[1]]}
-        colorScheme={buttonColorScheme}
+        dimensions={{ height, width: height }}
+        cssExtra={buttonInjectCSS}
       >
         <Icon>
           R

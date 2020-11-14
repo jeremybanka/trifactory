@@ -30,12 +30,21 @@
   font-weight: 500;
 }
 
-@keyframes App-logo-spin {
+@keyframes Appear {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes Disappear {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 

@@ -1,25 +1,39 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 import { useEffect, useState } from 'react'
-import { getCssVarsColor, cssCorePanel } from '../controlStyles'
+import { switchCSS } from '../css'
+
+const defaultDimensions =
+{ height: 24,
+  innerPad: 3,
+  switchWidth: 36 }
 
 export default function ToggleFlip({
   id,
-  checkProvided,
+  labelText,
+  toggleStateProvided,
   handler,
-  dimensions: [x, y] = [64, 36],
-  colorScheme,
+  injectCSS,
+  dimensions,
 }) {
-  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
-  const [checked, setChecked] = useState(checkProvided)
-  const [initialSwitchPosition, setInitialSwitchPosition] = useState(checkProvided ? 100 : 0)
-  const [switchPosition, setSwitchPosition] = useState(checkProvided ? 100 : 0)
+  const [checked, setChecked] = useState(toggleStateProvided)
+  const [initialSwitchPosition, setInitialSwitchPosition] = useState(toggleStateProvided ? 100 : 0)
+  const [switchPosition, setSwitchPosition] = useState(toggleStateProvided ? 100 : 0)
   const [actionIsDrag, setActionIsDrag] = useState(false)
 
+  const {
+    height,
+    innerPad,
+    switchWidth,
+    thumbWidth,
+  } = { ...defaultDimensions, ...dimensions }
+  const innerHeight = height - innerPad * 2
+  const thumbDisplace = innerPad + (switchWidth - height) * (switchPosition / 100)
+
   useEffect(() => {
-    setSwitchPosition(checkProvided ? 100 : 0)
-    setChecked(checkProvided)
-  }, [checkProvided])
+    setSwitchPosition(toggleStateProvided ? 100 : 0)
+    setChecked(toggleStateProvided)
+  }, [toggleStateProvided])
 
   const handleSetInitialSwitchPosition = () => {
     setInitialSwitchPosition(switchPosition)
@@ -40,102 +54,78 @@ export default function ToggleFlip({
 
   return (
     <div
-      id={id}
-      onMouseDown={handleSetInitialSwitchPosition}
-      onTouchStart={handleSetInitialSwitchPosition}
-      onMouseUp={resolveEvent}
-      onTouchEnd={resolveEvent}
       css={css`
-        ${cssCorePanel}
-        ${cssVarsColor}
         display: grid;
         align-items: center;
         justify-items: center;
         grid-template:
-          [row1-start] "switch    " ${y}px [row1-end]
-          /             ${x}px;
-        * { cursor: pointer; }
-        input[type=checkbox] {
-          grid-area: switch;
-          opacity: 0;
-          height: ${y}px;
-          width:  ${x}px;
-          &:checked ~ .switch > .track { 
-            background-color: var(--fg-color);
-            > .handle {
-              background-color: var(--ex-bg-color);
-            }
-          }
-        }
-        input[type=range] {
-          height: ${y}px;
-          width:  ${x}px;
-          margin: 0px;
-          grid-area: switch;
-          -webkit-appearance: none;
-          appearance: none;
-          outline: none;
-          border-radius: 0;
-          &::-webkit-slider-thumb {
-            -webkit-appearance: none; /* Override default look */
-            appearance: none;
-            border: none;
-            height: ${y}px;
-            width:  ${y}px;
-            background: red;
-            transition: transform 0.05s;
-            opacity: 0;
-          }
-          &::-moz-range-thumb {
-            border-radius: 0px;
-            width: 20px;
-            background: red;
-            transition: transform 0.05s;
-          }
-        }
-        .switch {
-          pointer-events: none;
-          grid-area: switch;
-          overflow: hidden;
-          height: ${y}px;
-          width:  ${x}px;
-          .track {
-            display: flex;
-            justify-content: center;
-            transition-property: all;
-            transition-duration: 0.1s;
-            transition-timing-function: ease-out;
-            height: ${y}px;
-            width:  ${2 * x + y}px;
-            margin-left: ${-1 * x + (x - y) * (switchPosition / 100)}px;
-            background-color: var(--mg-color);
-            //   0 -> -x
-            // 100 -> -y
-            .handle {
-              width:  ${y - 4}px;
-              height: ${y - 4}px;
-              background: var(--ex-bg-color);
-              margin: 2px;
-            }
-          }
+          [row1-start] "label     switch           " ${height}px [row1-end]
+          /             auto      ${switchWidth}px;
+        label {
+          cursor: pointer;
+          user-select: none;
+          padding: 0 5px;
         }
       `}
     >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={handler}
-      />
-      <input
-        type="range"
-        value={switchPosition}
-        onChange={handleSetSwitchPosition}
-        min={0}
-        max={100}
-      />
-      <div className='switch'>
-        <div className='track'>
-          <div className='handle' />
+      {labelText && <label htmlFor={id}>
+        {labelText}
+      </label>
+      }
+      <div
+        onMouseDown={handleSetInitialSwitchPosition}
+        onTouchStart={handleSetInitialSwitchPosition}
+        onMouseUp={resolveEvent}
+        onTouchEnd={resolveEvent}
+        css={css`
+          ${switchCSS}
+          ${injectCSS}
+          grid-template:
+            [row1-start] "switch           " ${height}px [row1-end]
+            /             ${switchWidth}px;
+          input[type=checkbox] {
+            height: ${height}px;
+            width:  ${switchWidth}px;
+          }
+          input[type=range] {
+            height: ${innerHeight}px;
+            width:  ${switchWidth}px;
+            &::-webkit-slider-thumb {
+              height: ${innerHeight}px;
+              width:  ${thumbWidth || innerHeight}px;
+            }
+            &::-moz-range-thumb {
+              height: ${innerHeight}px;
+              width:  ${thumbWidth || innerHeight}px;
+            }
+          }
+          .switch {
+            height: ${height}px;
+            width:  ${switchWidth}px;
+            .thumb {
+              width:  ${thumbWidth || innerHeight}px;
+              height: ${innerHeight}px;
+              margin: ${innerPad}px 0;
+              margin-left: ${thumbDisplace}px;
+            }
+          }
+        `}
+      >
+        <input
+          type="checkbox"
+          id={id}
+          checked={checked}
+          onChange={handler}
+        />
+        <input
+          type="range"
+          value={switchPosition}
+          onChange={handleSetSwitchPosition}
+          min={0}
+          max={100}
+        />
+        <div className='switch'>
+          <div className='thumb' />
         </div>
       </div>
     </div>

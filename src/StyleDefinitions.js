@@ -15,7 +15,7 @@ margin: auto;
 padding: 20px;
 background: ${props => props.hex};
 transition-property: background;
-transition-duration: 0.2s;
+transition-duration: 0.33s;
 transition-timing-function: initial;
 > * + * { margin-top: 10px; }
 `
@@ -35,4 +35,16 @@ display: flex;
 `
 export const ControlStripSpacer = styled.div`
 flex-grow: 1;
+`
+export const PreviewArea = styled.div`
+height: 100px;
+margin-bottom: 20px;
+> div {
+  background: ${props => props.hex};
+  height: 100px;
+  width: 100px;
+  border-radius: 100%;
+  border: 2px solid white;
+  cursor: pointer;
+}
 `

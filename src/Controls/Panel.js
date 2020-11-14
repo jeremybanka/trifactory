@@ -1,23 +1,29 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { cssCorePanel, getCssVarsColor } from './controlStyles'
+import { panelCSS } from './css'
 
-export default ({
+const defaultDimensions =
+{ height: 100,
+  width: 100 }
+
+export default function Panel({
   children,
   onClick,
   label,
-  colorScheme,
-  dimensions = [100, 100],
-}) => {
-  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
+  cssExtra,
+  gridArea,
+  dimensions,
+}) {
+  const { height, width } = { ...defaultDimensions, ...dimensions }
   return (
     <div
       onClick={onClick}
       css={css`
-        ${cssCorePanel};
-        ${cssVarsColor};
-        height: ${dimensions[1]}px;
-        width: ${dimensions[0]}px;
+        ${panelCSS};
+        ${cssExtra};
+        grid-area: ${gridArea};
+        height: ${height}px;
+        width: ${width}px;
         align-items: center;
         align-content: center;
         justify-content: center;

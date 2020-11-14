@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 // luum
 import {
   HUE_STRUCTURES,
-  calibrationSheets,
   builtInTunerKit,
   wrapAround,
 } from 'luum'
@@ -10,8 +9,10 @@ import {
 import { App } from './StyleDefinitions'
 // Children
 import PaletteModule from './PaletteModule'
+// temporary
+import calibrationSheets from './preconfig/calibrationSheets'
 
-export default () => {
+export default function Application() {
   const tuner = builtInTunerKit.simulateCMYK
   const [hues, setHues] = useState(calibrationSheets.satLumTestAndRainbows.hues)
   const [colors, setColors] = useState(calibrationSheets.satLumTestAndRainbows.colors)

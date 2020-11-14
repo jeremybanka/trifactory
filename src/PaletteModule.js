@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { css } from '@emotion/core'
 // luum
 import {
-  hardContrast,
-  softContrast,
   hexToSpec,
   specToHex,
   gradientsToHexArrays,
-  getOffset,
   validateHex,
+  scheme,
+  templates,
+  specToHexFixLimit,
 } from 'luum'
 // Controls
 import { Toggle, Slider, TextField } from './Controls'
@@ -17,6 +18,7 @@ import {
   GradientRow,
   ControlStrip,
   ControlStripSpacer,
+  PreviewArea,
 } from './StyleDefinitions'
 // Children
 import Swatch from './Swatch'
@@ -29,12 +31,29 @@ export default ({
   handleSetColors,
 }) => {
   const { hue, sat, lum, prefer } = color
-  const hex = specToHex({ hue, sat, lum, prefer, tuner })
+  const [previewColor, setPreviewColor] = useState(color)
+  const preview = specToHexFixLimit({ ...previewColor, tuner })
+  const { hex, limit } = specToHexFixLimit({ hue, sat, lum, prefer, tuner })
   const [inputHex, setInputHex] = useState(hex.substr(1, 6))
+
+  const controlScheme = css`${scheme({
+    hexes: [hex],
+    scheme: templates.trifactory,
+    tuner,
+  }).Control}`
+
+  const sliderDimensions = {
+    height: 36,
+    rangeWidth: 100,
+  }
 
   useEffect(() => {
     setInputHex(specToHex({ ...color, tuner }).substr(1, 6))
   }, [color, tuner])
+
+  const confirmPreview = () => {
+    handleSetColors([{ targetColorIdx: colorIdx, content: { ...previewColor } }])
+  }
 
   const importHexColor = input => {
     const hex = validateHex.process(input)
@@ -50,7 +69,9 @@ export default ({
     let value = parseInt(e.target.value, 10)
     if(attribute === 'lum') value /= 100
     content[attribute] = value
-    handleSetColors([{ targetColorIdx: colorIdx, content }])
+    const newColor = { ...previewColor, ...content }
+    setPreviewColor(newColor)
+    console.log(newColor)
   }
 
   const handleSetPrefer = () => {
@@ -61,106 +82,60 @@ export default ({
     handleSetColors([{ targetColorIdx: colorIdx, content }])
   }
 
-  // COLOR CONTEXT ARCHITECTURE CURRENT REVISION
-  const shade = lum => getOffset({
-    hex,
-    tuner,
-    offsets: [{ attribute: 'lum', offsetValue: lum / -100 }],
-  })
-
-  const colorContext = {
-    hardContrast: hardContrast(hex),
-    softContrast: softContrast(hex, tuner),
-  }
-
-  const colorScheme = {
-    exfg: colorContext.softContrast,
-    exbg: hex,
-    fg: [colorContext.softContrast, colorContext.softContrast, colorContext.hardContrast],
-    mg: [20, 15, 25].map(n => shade(n)),
-    bg: [10, 5, 15].map(n => shade(n)),
-  }
-
-  // COLOR CONTEXT ARCHITECTURE WIP
-  const colorSchemeDraft = hex => {
-    const shade = lum => getOffset({
-      hex,
-      tuner,
-      offsets: [{ attribute: 'lum', offsetValue: lum / -100 }],
-    })
-    return ({
-      neutral: {
-        fg: softContrast(hex, tuner),
-        mg: shade(20),
-        bg: shade(10),
-      },
-      focus: {
-        fg: softContrast(hex, tuner),
-        mg: shade(15),
-        bg: shade(5),
-      },
-      active: {
-        fg: hardContrast(hex, tuner),
-        mg: shade(25),
-        bg: shade(15),
-      },
-      disabled: {
-        fg: shade(30),
-        mg: shade(15),
-        bg: shade(5),
-      },
-    })
-  }
-
   return (
     <PaletteModule hex={hex} className="PaletteModule">
+      <PreviewArea hex={preview.hex}>
+        <div onClick={confirmPreview} />
+      </PreviewArea>
       <ControlStrip>
         <TextField
-          frontMatter='#'
-          passedValue={inputHex}
+          valueProvided={inputHex}
           validate={validateHex}
           handler={handleSubmitHex}
-          dimensions={[100, 36]}
-          colorScheme={colorScheme}
+          frontMatter='#'
+          dimensions={{ fieldWidth: 100 }}
+          injectCSS={controlScheme}
         />
         <ControlStripSpacer />
         <Slider
-          label="Hue"
+          labelText="Hue"
           id='hue'
           handler={handleAdjustSpec}
-          initialValue={hue}
+          valueProvided={previewColor.hue}
           range={[0, 360]}
-          dimensions={[150, 36]}
-          colorScheme={colorScheme}
+          dimensions={sliderDimensions}
+          injectCSS={controlScheme}
           numeric
         />
         <Slider
-          label="Saturation"
+          labelText="Saturation"
           id='sat'
           handler={handleAdjustSpec}
-          initialValue={sat}
+          valueProvided={previewColor.sat}
           range={[0, 255]}
-          dimensions={[150, 36]}
-          colorScheme={colorScheme}
+          limit={preview.limit.sat}
+          dimensions={sliderDimensions}
+          injectCSS={controlScheme}
           numeric
         />
         <Slider
-          label="Luminosity"
+          labelText="Luminosity"
           id='lum'
           handler={handleAdjustSpec}
-          initialValue={(lum * 100)}
+          valueProvided={(previewColor.lum * 100)}
           range={[0, 100]}
-          dimensions={[150, 36]}
-          colorScheme={colorScheme}
+          limit={preview.limit.lum.map(lum => lum * 100)}
+          dimensions={sliderDimensions}
+          injectCSS={controlScheme}
           numeric
         />
         <Toggle
           id={`prefer-color-${colorIdx}`}
-          label='Prefer Sat.'
+          labelText='Prefer Sat.'
           handler={handleSetPrefer}
-          checkProvided={prefer === 'sat'}
-          colorScheme={colorScheme}
-          templateName='title-left'
+          toggleStateProvided={prefer === 'sat'}
+          injectCSS={controlScheme}
+          layout='title-left'
         />
       </ControlStrip>
       <ControlStrip>
@@ -169,9 +144,8 @@ export default ({
           id={`prefer-color-${colorIdx}-flip`}
           type='switch'
           handler={handleSetPrefer}
-          checkProvided={prefer === 'sat'}
-          colorScheme={colorScheme}
-          dimensions={[40, 24]}
+          toggleStateProvided={prefer === 'sat'}
+          injectCSS={controlScheme}
         />
       </ControlStrip>
       {gradientsToHexArrays(color, tuner).map((hexGroup, hexGroupIdx) =>

@@ -1,62 +1,68 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { getCssVarsColor, getCssGridTemplate, cssCoreCheck } from '../controlStyles'
+import { getCssGridTemplate } from '../controlStyles'
+import { checkCSS } from '../css'
 
-export default function TogglePress({
+const defaultDimensions =
+{ height: 36,
+  width: null }
+
+export default function Button({
   id,
-  label = 'Label',
-  checkProvided,
+  labelText = 'Label',
+  toggleStateProvided,
   handler,
-  dimensions: [x, y] = [null, 36], // 36 is min/default height
-  templateName,
-  colorScheme,
+  layout,
+  dimensions,
+  injectCSS,
 }) {
-  const cssVarsColor = colorScheme ? getCssVarsColor(colorScheme) : ''
-  const cssGridTemplate = getCssGridTemplate(templateName, y)
+  const { height, width } = { ...defaultDimensions, ...dimensions }
+  const cssGridTemplate = getCssGridTemplate(layout, height)
 
   return (
     <label
       htmlFor={id}
       css={css`
-        ${cssCoreCheck};
-        ${cssVarsColor};
+        ${checkCSS};
+        ${injectCSS};
         ${cssGridTemplate};
-        height: ${y}px;
-        width:  ${x ? `${x}px` : 'auto'};
+        height: ${height}px;
+        width:  ${width ? `${width}px` : 'auto'};
         input[type=checkbox] {
-          height: ${y}px;
-          width:  ${y}px;
-          &.active  ~ .box,
-          &:active  ~ .box, 
-          &:checked ~ .box {
-            border-width: ${(y - 20) / 2}px; // fill the box
-          }
+          height: ${height}px;
+          width:  ${height}px;
+          &.active,
+          &:active, 
+          &:checked { ~ .box {
+            // fill the box:
+            border-width: ${(height - 20) / 2}px;
+          }}
         }
         .title {
-          height: ${y}px;
-          width:  ${x ? `${x}px` : 'auto'};;
+          height: ${height}px;
+          width:  ${width ? `${width}px` : 'auto'};;
         }
         .box {
-          height: ${y - 20}px;
-          width:  ${y - 20}px;
+          height: ${height - 20}px;
+          width:  ${height - 20}px;
         }
         .check {
           border-left:   3.5px solid var(--bg-color);
           border-bottom: 3.5px solid var(--bg-color);
-          height: ${y * 0.1}px;
-          width:  ${y * 0.2}px;
-          margin-top:  -${y * 0.05}px;
-          margin-left: -${y * 0.02}px;
+          height: ${height * 0.1}px;
+          width:  ${height * 0.2}px;
+          margin-top:  -${height * 0.05}px;
+          margin-left: -${height * 0.02}px;
         }
       `}
     >
       <input
         id={id}
         type="checkbox"
-        checked={checkProvided}
+        checked={toggleStateProvided}
         onChange={handler}
       />
-      <div className='title'>{label}</div>
+      <div className='title'>{labelText}</div>
       <div className='box' />
       <div className='check' />
     </label>

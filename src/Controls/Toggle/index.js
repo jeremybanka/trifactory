@@ -4,35 +4,35 @@ import Switch from './Switch'
 
 export default function Toggle({
   id,
-  label,
-  checkProvided,
+  labelText,
+  toggleStateProvided,
   handler,
   type,
   dimensions,
-  templateName,
-  colorScheme,
+  layout,
+  injectCSS,
 }) {
   switch(type) {
     case 'switch': return (
       <Switch
         id={id}
-        label={label}
-        checkProvided={checkProvided}
+        labelText={labelText}
+        toggleStateProvided={toggleStateProvided}
         handler={handler}
         dimensions={dimensions}
-        templateName={templateName}
-        colorScheme={colorScheme}
+        layout={layout}
+        injectCSS={injectCSS}
       />
     )
     default: return (
       <Button
         id={id}
-        label={label}
-        checkProvided={checkProvided}
+        labelText={labelText}
+        toggleStateProvided={toggleStateProvided}
         handler={handler}
         dimensions={dimensions}
-        templateName={templateName}
-        colorScheme={colorScheme}
+        layout={layout}
+        injectCSS={injectCSS}
       />
     )
   }
