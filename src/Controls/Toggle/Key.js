@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { getCssGridTemplate } from '../controlStyles'
 import { checkCSS } from '../css'
 import { Icon } from '../Icon'
 
@@ -13,7 +12,6 @@ export default function Key({
   labelText = 'Label',
   toggleStateProvided,
   handler,
-  layout,
   dimensions,
   injectCSS,
 }) {
