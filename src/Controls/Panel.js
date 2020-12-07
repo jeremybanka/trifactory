@@ -1,32 +1,49 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { keyStyle, getColorStyles } from './controlStyles'
+import { panelCSS } from './css'
+import { cssInteractiveTransform } from './css/cssInteractiveTransform'
 
-export default ({
+const defaultDimensions =
+{ height: 100,
+  width: null }
+
+export default function Panel({
+  id,
   children,
   onClick,
   label,
-  colorScheme,
-  dimensions = [100, 100],
-}) => {
-  const customColorStyles = colorScheme
-    ? getColorStyles(colorScheme)
-    : ''
+  cssExtra,
+  gridArea,
+  dimensions,
+  disabled,
+}) {
+  const { height, width } = { ...defaultDimensions, ...dimensions }
+  const autoWidth = width ? `${width}px` : 'auto'
+
   return (
-    <div
+    <button
+      type='button'
+      id={id}
       onClick={onClick}
+      disabled={disabled}
       css={css`
-        ${keyStyle};
-        ${customColorStyles};
-        height: ${dimensions[1]}px;
-        width: ${dimensions[0]}px;
+        ${panelCSS};
+        ${cssInteractiveTransform};
+        ${cssExtra};
+        grid-area: ${gridArea};
+        height: ${height}px;
+        width: ${autoWidth};
         align-items: center;
         align-content: center;
         justify-content: center;
         text-align: center;
+        .icon { 
+          height: ${height}px;
+          width:  ${height}px;
+        }
       `}
     >
-      {label || children}
-    </div>
+      {children}{label && <div className='text'>{label}</div>}
+    </button>
   )
 }

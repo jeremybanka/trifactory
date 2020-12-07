@@ -1,33 +1,70 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 import { useState, useEffect } from 'react'
+import { funnel } from 'luum'
 import Label from './Label'
-import { sliderWrap, numberInput, getColorStyles, getExtraColorStyles } from './controlStyles'
+import { getCssGridTemplate } from './controlStyles'
+import { sliderCSS } from './css'
+import { Icon } from './Icon'
 
-export default ({
+const defaultDimensions =
+{ height: 36,
+  innerPad: 3,
+  rangeWidth: 150,
+  thumbWidth: 20,
+  numInputWidth: 50 }
+
+const numberIfString = value => {
+  if(typeof value === 'string') return Number(value)
+  return value
+}
+
+export default function Slider({
   id,
-  label,
-  initialValue,
+  labelText,
+  valueProvided,
   handler,
+  step = 1,
+  shiftStep = step * 10,
   range,
-  step,
-  colorScheme,
+  limit = range,
   numeric,
   liveUpdate,
-  dimensions = [36, 150],
-}) => {
-  const [value, setValue] = useState(initialValue)
+  dimensions,
+  injectCSS,
+}) {
+  const [value, setValue] = useState(funnel(valueProvided, limit))
   const [enterIsHeld, setEnterIsHeld] = useState(false)
   const [shiftIsHeld, setShiftIsHeld] = useState(false)
 
-  useEffect(() => {
-    setValue(initialValue)
-    setValue(initialValue)
-  }, [initialValue])
+  const {
+    height,
+    innerPad,
+    rangeWidth,
+    thumbWidth,
+    numInputWidth,
+  } = { ...defaultDimensions, ...dimensions }
+
+  // console.log('value', value, 'limit', limit)
+
+  const rangeTotal = range[1] - range[0]
+  const limitTotal = limit[1] - limit[0]
+  const limitFraction = limitTotal / rangeTotal
+  const innerHeight = height - innerPad * 2
+  const slidableSpace = rangeWidth - thumbWidth
+  const trackWidth = thumbWidth + slidableSpace * limitFraction
+  const trackDisplace = rangeWidth * limit[0] / rangeTotal
+  const thumbProgress = (value - limit[0]) / (limitTotal || 1)
+  const thumbDisplace = thumbProgress * slidableSpace * limitFraction
+
+  useEffect(
+    () => { setValue(funnel(valueProvided, limit)) },
+    [valueProvided, limit]
+  )
 
   const handleSetValue = e => {
     setValue(e.target.value)
-    if(liveUpdate) handler(e)
+    if(liveUpdate) handler(Number(e.target.value))
   }
   const handleKeyDown = e => {
     switch(e.keyCode) {
@@ -35,12 +72,12 @@ export default ({
       case 16: setShiftIsHeld(true); break
       case 37:
       case 40:
-        setValue(parseInt(value, 10) - (shiftIsHeld ? 10 : 1))
+        setValue(numberIfString(value) - (shiftIsHeld ? shiftStep : step))
         e.preventDefault()
         break
       case 38:
       case 39:
-        setValue(parseInt(value, 10) + (shiftIsHeld ? 10 : 1))
+        setValue(numberIfString(value) + (shiftIsHeld ? shiftStep : step))
         e.preventDefault()
         break
       default:
@@ -48,60 +85,105 @@ export default ({
   }
   const handleKeyUp = e => {
     switch(e.keyCode) {
-      case 13: setEnterIsHeld(false); handler(e); break
+      case 13: setEnterIsHeld(false); handler(numberIfString(value)); break
       case 16: setShiftIsHeld(false); break
       default:
     }
   }
-  const colorStyles = colorScheme
-    ? getColorStyles(colorScheme)
-    : ''
-  const extraColorStyles = colorScheme
-    ? getExtraColorStyles(colorScheme)
-    : ''
+
+  const layoutCSS = numeric
+    ? getCssGridTemplate('numeric-slider', height, rangeWidth, numInputWidth)
+    : getCssGridTemplate('slider', height, rangeWidth, numInputWidth)
 
   return (
     <div
+      onMouseUp={() => handler(numberIfString(value))}
+      onTouchEnd={() => handler(numberIfString(value))}
       css={css`
-        ${sliderWrap}
-        ${colorStyles}
-        ${extraColorStyles}
+        ${sliderCSS}
+        ${layoutCSS}
+        ${injectCSS}
+        input[type=range] {
+          margin-left: ${trackDisplace}px;
+          width:  ${trackWidth}px;
+          height: ${height}px;
+          &::-webkit-slider-thumb { 
+            height: ${height}px;
+            width:  ${thumbWidth}px;
+          }
+          &::-moz-range-thumb { 
+            height: ${height}px;
+            width:  ${thumbWidth}px;
+          }
+        }
+        .range {
+          width:  ${rangeWidth}px;
+          height: ${innerHeight}px;
+          margin: ${innerPad}px 0;
+          .track {
+            height: ${innerHeight}px;
+            width:  ${trackWidth}px;
+            margin-left: ${trackDisplace}px;
+            .thumb {
+              width:  ${thumbWidth}px;
+              height: ${innerHeight}px;
+              margin-left: ${thumbDisplace}px;
+
+            }
+          }
+        }
+        input[type=number] {
+          grid-area: number;
+          width:  ${numInputWidth}px;
+          height: ${innerHeight}px;
+        }
+        button {
+          height: ${innerHeight}px;
+          width:  ${innerHeight}px;
+        }
       `}
       className={enterIsHeld ? 'active' : ''}
     >
-      <Label text={label} />
+      <Label text={labelText} />
+      <div className='range'>
+        <div className='track'>
+          <div className='thumb' />
+        </div>
+      </div>
       <input
         type="range"
+        tabIndex={-1}
         id={id}
         value={value}
         onChange={handleSetValue}
-        onClick={handler}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
-        min={range[0]}
-        max={range[1]}
+        min={Math.round(limit[0])}
+        max={Math.round(limit[1])}
         step={step}
-        css={css`
-          width:  ${dimensions[0]}px;
-          height: ${dimensions[1]}px;
-          &::-webkit-slider-thumb { height: ${dimensions[2] || dimensions[1]}px }
-          &::-moz-range-thumb { height: ${dimensions[2] || dimensions[1]}px }
-        `}
       />
+      <button
+        type='button'
+        disabled={value === limit[0]}
+        onClick={() => handler(numberIfString(value) - shiftStep)}
+      >
+        <Icon value='minus' />
+      </button>
+      <button
+        type='button'
+        disabled={value === limit[1]}
+        onClick={() => handler(numberIfString(value) + shiftStep)}
+      >
+        <Icon value='plus' />
+      </button>
       {numeric &&
         <input
           id={id}
           type="number"
-          value={Math.round(value)}
+          value={Math.round(numberIfString(value))}
           onChange={handleSetValue}
           onKeyDown={handleKeyDown}
           onKeyUp={handleKeyUp}
-          onClick={handler}
-          css={css`
-          ${numberInput}
-          width:  ${dimensions[0]}px;
-          height: ${dimensions[1] - 6}px;
-        `}
         />}
     </div>
   )

@@ -30,6 +30,7 @@ module.exports = {
     },
   },
   rules: {
+    'no-case-declarations': 'off',
     'arrow-parens': ['error', 'as-needed'],
     'comma-dangle': ['error', {
       'arrays': 'always-multiline',
