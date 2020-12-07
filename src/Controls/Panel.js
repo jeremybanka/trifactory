@@ -1,36 +1,49 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 import { panelCSS } from './css'
+import { cssInteractiveTransform } from './css/cssInteractiveTransform'
 
 const defaultDimensions =
 { height: 100,
-  width: 100 }
+  width: null }
 
 export default function Panel({
+  id,
   children,
   onClick,
   label,
   cssExtra,
   gridArea,
   dimensions,
+  disabled,
 }) {
   const { height, width } = { ...defaultDimensions, ...dimensions }
+  const autoWidth = width ? `${width}px` : 'auto'
+
   return (
-    <div
+    <button
+      type='button'
+      id={id}
       onClick={onClick}
+      disabled={disabled}
       css={css`
         ${panelCSS};
+        ${cssInteractiveTransform};
         ${cssExtra};
         grid-area: ${gridArea};
         height: ${height}px;
-        width: ${width}px;
+        width: ${autoWidth};
         align-items: center;
         align-content: center;
         justify-content: center;
         text-align: center;
+        .icon { 
+          height: ${height}px;
+          width:  ${height}px;
+        }
       `}
     >
-      {label || children}
-    </div>
+      {children}{label && <div className='text'>{label}</div>}
+    </button>
   )
 }

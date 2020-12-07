@@ -8,7 +8,6 @@ export default ({
   <div
     onClick={() => importHexColor(hex)}
     css={css`
-      font-family: Theia;
       display: inline-flex;
       flex-grow: 1;
       height: 100px;

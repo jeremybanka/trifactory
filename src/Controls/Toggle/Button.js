@@ -2,10 +2,12 @@
 import { css, jsx } from '@emotion/core'
 import { getCssGridTemplate } from '../controlStyles'
 import { checkCSS } from '../css'
+import { Icon } from '../Icon'
 
 const defaultDimensions =
 { height: 36,
-  width: null }
+  width: null,
+  innerPad: 20 }
 
 export default function Button({
   id,
@@ -16,7 +18,9 @@ export default function Button({
   dimensions,
   injectCSS,
 }) {
-  const { height, width } = { ...defaultDimensions, ...dimensions }
+  const { height, width, innerPad } = { ...defaultDimensions, ...dimensions }
+  const autoWidth = width ? `${width}px` : 'auto'
+  const innerHeight = height - innerPad
   const cssGridTemplate = getCssGridTemplate(layout, height)
 
   return (
@@ -27,7 +31,11 @@ export default function Button({
         ${injectCSS};
         ${cssGridTemplate};
         height: ${height}px;
-        width:  ${width ? `${width}px` : 'auto'};
+        width:  ${autoWidth};
+        &:hover > .box, 
+        &:focus > .box { 
+          border-width: 2px 
+        }
         input[type=checkbox] {
           height: ${height}px;
           width:  ${height}px;
@@ -35,24 +43,23 @@ export default function Button({
           &:active, 
           &:checked { ~ .box {
             // fill the box:
-            border-width: ${(height - 20) / 2}px;
+            border-width: ${(innerHeight) / 2}px;
           }}
         }
         .title {
           height: ${height}px;
-          width:  ${width ? `${width}px` : 'auto'};;
+          width:  ${autoWidth};
         }
         .box {
-          height: ${height - 20}px;
-          width:  ${height - 20}px;
+          height: ${innerHeight}px;
+          width:  ${innerHeight}px;
         }
-        .check {
-          border-left:   3.5px solid var(--bg-color);
-          border-bottom: 3.5px solid var(--bg-color);
-          height: ${height * 0.1}px;
-          width:  ${height * 0.2}px;
-          margin-top:  -${height * 0.05}px;
-          margin-left: -${height * 0.02}px;
+        .icon {
+          height: ${innerHeight}px;
+          width:  ${innerHeight}px;
+          font-size: ${(innerHeight) * 0.75}px;
+          font-variation-settings: 'wght' 500;
+          color: var(--bg-color)
         }
       `}
     >
@@ -64,7 +71,7 @@ export default function Button({
       />
       <div className='title'>{labelText}</div>
       <div className='box' />
-      <div className='check' />
+      <Icon value='check' />
     </label>
   )
 }

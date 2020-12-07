@@ -1,70 +1,94 @@
 import { useState, useEffect } from 'react'
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { Icon } from '../StyleDefinitions'
+import { Icon } from './Icon'
 import Label from './Label'
-import Panel from './Panel'
 import { textFieldCSS } from './css'
+
+const noHandlerMessage = value => console.log('no handler: "', value, '" was dropped on the floor')
 
 const defaultDimensions =
 { height: 36,
-  fieldWidth: 150 }
+  width: 180 }
 
 export default function TextField({
   valueProvided,
-  validate,
-  handler,
+  validate = {},
+  handler = noHandlerMessage,
   frontMatter,
   dimensions,
   injectCSS,
-  buttonInjectCSS = injectCSS,
+  undoButton,
+  goButton,
+  disabled,
 }) {
   const [value, setValue] = useState(valueProvided)
-  const [valueIsAcceptable, setValueIsAcceptable] = useState(false)
+  const [valueIsReady, setValueIsReady] = useState(false)
   const [enterIsHeld, setEnterIsHeld] = useState(false)
 
-  const { height, fieldWidth } = { ...defaultDimensions, ...dimensions }
+  const { height, width } = { ...defaultDimensions, ...dimensions }
 
   useEffect(() => { setValue(valueProvided) }, [valueProvided])
 
+  const validateDraft = value => {
+    const valueIsValidDraft = validate.draft
+      ? validate.draft(value)
+      : true
+    const attemptIsEmpty = value.length === 0
+    return (valueIsValidDraft || attemptIsEmpty)
+  }
+  const validateFinal = value => validate.final
+    ? validate.final(value)
+    : true
+
   const handleSetValue = e => {
-    const maxLength = validate.acceptLengths[0]
     const attempt = e.target.value
-    const attemptIsEmpty = attempt.length === 0
-    const attemptIsLegal = validate.test(attempt)
-    const attemptIsTooLong = attempt.length > maxLength
-    const attemptIsAcceptableLength = validate.acceptLengths.some(
-      validLength => validLength === attempt.length
-    )
-    // console.log(attempt, attemptIsLegal ? 'is valid' : 'is not valid')
-    if(
-      (attemptIsEmpty || attemptIsLegal)
-      && !attemptIsTooLong
-    ) setValue(e.target.value)
-    setValueIsAcceptable(attemptIsAcceptableLength)
+    const attemptIsValid = validateDraft(attempt)
+    if(attemptIsValid) setValue(e.target.value)
+    const newValue = attemptIsValid ? attempt : value
+    const newValueIsReady = validateFinal(newValue)
+    setValueIsReady(newValueIsReady)
   }
   const handleKeyDown = e => {
     if(e.keyCode === 13) setEnterIsHeld(true)
   }
   const handleKeyUp = e => {
     if(e.keyCode === 13) {
-      if(valueIsAcceptable) handler(value)
+      console.log(e.target.value)
+      if(valueIsReady) handler(e.target.value)
       setEnterIsHeld(false)
     }
   }
-  const handleButtonPress = () => {
-    if(valueIsAcceptable) handler(value)
-  }
+  const handleButtonPress = () => { if(valueIsReady) handler(value) }
 
   const labelContent = 'Hexcode'
 
   return (
     <div
-      className={enterIsHeld ? 'active' : ''}
+      className={`
+        ${enterIsHeld && 'active'}
+        ${disabled && 'disabled'}
+      `}
       css={css`
         ${textFieldCSS}
         ${injectCSS}
         height: ${height}px;
+        width: ${width}px;
+        input[type=text] {
+          flex-grow: 1;
+        }
+        .buttonset {
+          button { 
+            height: ${height - 6}px;
+            width: ${height - 6}px;
+            &:last-of-type { margin-right: 3px }
+            &.cancel { width: ${value === valueProvided ? 0 : height - 6}px }
+            &:disabled {
+              background: none;
+              opacity: 50%;
+            }
+          }
+        }
       `}
     >
       {frontMatter && <div className='front-matter'>
@@ -77,17 +101,23 @@ export default function TextField({
         onChange={handleSetValue}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
-        css={css`width: ${fieldWidth}px;`}
+        disabled={disabled}
       />
-      <Panel
-        onClick={handleButtonPress}
-        dimensions={{ height, width: height }}
-        cssExtra={buttonInjectCSS}
-      >
-        <Icon>
-          R
-        </Icon>
-      </Panel>
+      <div className='buttonset'>
+        {undoButton && <button
+          type='button'
+          className='button cancel'
+          onClick={() => setValue(valueProvided)}
+          disabled={disabled}
+        ><Icon value='undo' />
+        </button>}
+        {goButton && <button
+          type='button'
+          onClick={handleButtonPress}
+          disabled={disabled}
+        ><Icon value='go' />
+        </button>}
+      </div>
     </div>
   )
 }

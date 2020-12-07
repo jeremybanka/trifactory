@@ -1,0 +1,17 @@
+"  --ex-bg-color: #5555ff;
+  --ex-mg-color: #4d4df7;
+  --ex-fg-color: #eeeeff;
+  --bg-color: #4141eb;
+  --mg-color: #2c2cd6;
+  --fg-color: #eeeeff;
+  &:hover, &:focus, &:focus-within {
+    --bg-color: #4b4bf5;
+    --mg-color: #3636e0;
+    --fg-color: #000033;
+  }
+  &:active, &.active {
+    --bg-color: #3131db;
+    --mg-color: #1d1dc7;
+    --fg-color: #eeeeff;
+  }
+"

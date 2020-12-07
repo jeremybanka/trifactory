@@ -1,13 +1,18 @@
 import { css } from '@emotion/core'
+import { buttonCSS } from './button'
+import { cssInteractiveTransform } from './cssInteractiveTransform'
 import { panelCSS } from './panel'
+import { resistClickCSS } from './resist-click'
 
 export const sliderCSS = css`
   ${panelCSS};
+  ${cssInteractiveTransform};
+  ${resistClickCSS};
   display: grid;
   &:hover,
+  &.focus,
   &:focus,
   &:focus-within {
-    overflow: visible;
     label {
       transform: translateY(-15px) scaleY(1);
       opacity: 1;
@@ -53,6 +58,7 @@ export const sliderCSS = css`
       background: var(--mg-color);
     }
     &:hover,
+    &.focus,
     &:focus,
     &:focus-within {
       &::-webkit-slider-thumb {
@@ -85,7 +91,6 @@ export const sliderCSS = css`
     border-radius: 0;
     color: var(--ex-fg-color);
     background-color: var(--ex-bg-color);
-    font-family: Theia;
     font-weight: 500;
     font-size: 15px;
     margin: 3px;
@@ -93,44 +98,22 @@ export const sliderCSS = css`
     padding: 0;
     padding-left: 7px;
     &:hover,
+    &.focus,
     &:focus,
     &:focus-within {
       box-shadow: 0 0 0 0;
       outline: none;
     }
   }
-  button[type=button] {
-    ${panelCSS}
-    display: block;
-    appearance: none;
-    background: var(--ex-bg-color);
-    color: var(--fg-color);
-    font-size: 21px;
-    line-height: 1em;
-    padding: 0;
-    padding-bottom: 2px;
-    outline: none;
-    border: none;
+  button {
+    ${buttonCSS}
     margin: 3px;
-    align-items: center;
-    justify-content: center;
     &:disabled {
-      background: var(--bg-color);
-      opacity: 50%;
-      &:hover,
-      &:focus,
-      &:focus-within {
-        box-shadow: none;
-        background: var(--bg-color);
-        color: var(--fg-color);
-      }
+      color: var(--fg-color);
     }
-    &:hover,
-    &:focus,
-    &:focus-within {
-      box-shadow: none;
-      color: var(--bg-color);
-      background: var(--fg-color);
-    } 
+    .icon { 
+      font-size: 13.5px; 
+      font-variation-settings: 'wght' 300;
+    }
   }
 `

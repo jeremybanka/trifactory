@@ -5,6 +5,7 @@ import { funnel } from 'luum'
 import Label from './Label'
 import { getCssGridTemplate } from './controlStyles'
 import { sliderCSS } from './css'
+import { Icon } from './Icon'
 
 const defaultDimensions =
 { height: 36,
@@ -13,12 +14,18 @@ const defaultDimensions =
   thumbWidth: 20,
   numInputWidth: 50 }
 
+const numberIfString = value => {
+  if(typeof value === 'string') return Number(value)
+  return value
+}
+
 export default function Slider({
   id,
   labelText,
   valueProvided,
   handler,
   step = 1,
+  shiftStep = step * 10,
   range,
   limit = range,
   numeric,
@@ -38,6 +45,8 @@ export default function Slider({
     numInputWidth,
   } = { ...defaultDimensions, ...dimensions }
 
+  // console.log('value', value, 'limit', limit)
+
   const rangeTotal = range[1] - range[0]
   const limitTotal = limit[1] - limit[0]
   const limitFraction = limitTotal / rangeTotal
@@ -48,13 +57,14 @@ export default function Slider({
   const thumbProgress = (value - limit[0]) / (limitTotal || 1)
   const thumbDisplace = thumbProgress * slidableSpace * limitFraction
 
-  useEffect(() => {
-    setValue(funnel(valueProvided, limit))
-  }, [valueProvided, limit])
+  useEffect(
+    () => { setValue(funnel(valueProvided, limit)) },
+    [valueProvided, limit]
+  )
 
   const handleSetValue = e => {
     setValue(e.target.value)
-    if(liveUpdate) handler(e)
+    if(liveUpdate) handler(Number(e.target.value))
   }
   const handleKeyDown = e => {
     switch(e.keyCode) {
@@ -62,12 +72,12 @@ export default function Slider({
       case 16: setShiftIsHeld(true); break
       case 37:
       case 40:
-        setValue(parseInt(value, 10) - (shiftIsHeld ? 10 * step : step))
+        setValue(numberIfString(value) - (shiftIsHeld ? shiftStep : step))
         e.preventDefault()
         break
       case 38:
       case 39:
-        setValue(parseInt(value, 10) + (shiftIsHeld ? 10 * step : step))
+        setValue(numberIfString(value) + (shiftIsHeld ? shiftStep : step))
         e.preventDefault()
         break
       default:
@@ -75,7 +85,7 @@ export default function Slider({
   }
   const handleKeyUp = e => {
     switch(e.keyCode) {
-      case 13: setEnterIsHeld(false); handler(e); break
+      case 13: setEnterIsHeld(false); handler(numberIfString(value)); break
       case 16: setShiftIsHeld(false); break
       default:
     }
@@ -87,8 +97,8 @@ export default function Slider({
 
   return (
     <div
-      onMouseUp={handler}
-      onTouchEnd={handler}
+      onMouseUp={() => handler(numberIfString(value))}
+      onTouchEnd={() => handler(numberIfString(value))}
       css={css`
         ${sliderCSS}
         ${layoutCSS}
@@ -142,6 +152,7 @@ export default function Slider({
       </div>
       <input
         type="range"
+        tabIndex={-1}
         id={id}
         value={value}
         onChange={handleSetValue}
@@ -154,18 +165,22 @@ export default function Slider({
       <button
         type='button'
         disabled={value === limit[0]}
-        onClick={() => handler({ target: { id, value: value - 10 * step } })}
-      >-</button>
+        onClick={() => handler(numberIfString(value) - shiftStep)}
+      >
+        <Icon value='minus' />
+      </button>
       <button
         type='button'
         disabled={value === limit[1]}
-        onClick={() => handler({ target: { id, value: value + 10 * step } })}
-      >+</button>
+        onClick={() => handler(numberIfString(value) + shiftStep)}
+      >
+        <Icon value='plus' />
+      </button>
       {numeric &&
         <input
           id={id}
           type="number"
-          value={Math.round(value)}
+          value={Math.round(numberIfString(value))}
           onChange={handleSetValue}
           onKeyDown={handleKeyDown}
           onKeyUp={handleKeyUp}

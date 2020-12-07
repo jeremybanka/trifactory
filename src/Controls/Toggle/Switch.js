@@ -6,7 +6,7 @@ import { switchCSS } from '../css'
 const defaultDimensions =
 { height: 24,
   innerPad: 3,
-  switchWidth: 36 }
+  trackWidth: 36 }
 
 export default function ToggleFlip({
   id,
@@ -15,6 +15,7 @@ export default function ToggleFlip({
   handler,
   injectCSS,
   dimensions,
+  disabled,
 }) {
   const [checked, setChecked] = useState(toggleStateProvided)
   const [initialSwitchPosition, setInitialSwitchPosition] = useState(toggleStateProvided ? 100 : 0)
@@ -24,11 +25,11 @@ export default function ToggleFlip({
   const {
     height,
     innerPad,
-    switchWidth,
+    trackWidth,
     thumbWidth,
   } = { ...defaultDimensions, ...dimensions }
   const innerHeight = height - innerPad * 2
-  const thumbDisplace = innerPad + (switchWidth - height) * (switchPosition / 100)
+  const thumbDisplace = innerPad + (trackWidth - height) * (switchPosition / 100)
 
   useEffect(() => {
     setSwitchPosition(toggleStateProvided ? 100 : 0)
@@ -60,7 +61,7 @@ export default function ToggleFlip({
         justify-items: center;
         grid-template:
           [row1-start] "label     switch           " ${height}px [row1-end]
-          /             auto      ${switchWidth}px;
+          /             auto      ${trackWidth}px;
         label {
           cursor: pointer;
           user-select: none;
@@ -82,14 +83,14 @@ export default function ToggleFlip({
           ${injectCSS}
           grid-template:
             [row1-start] "switch           " ${height}px [row1-end]
-            /             ${switchWidth}px;
+            /             ${trackWidth}px;
           input[type=checkbox] {
             height: ${height}px;
-            width:  ${switchWidth}px;
+            width:  ${trackWidth}px;
           }
           input[type=range] {
             height: ${innerHeight}px;
-            width:  ${switchWidth}px;
+            width:  ${trackWidth}px;
             &::-webkit-slider-thumb {
               height: ${innerHeight}px;
               width:  ${thumbWidth || innerHeight}px;
@@ -101,7 +102,7 @@ export default function ToggleFlip({
           }
           .switch {
             height: ${height}px;
-            width:  ${switchWidth}px;
+            width:  ${trackWidth}px;
             .thumb {
               width:  ${thumbWidth || innerHeight}px;
               height: ${innerHeight}px;
@@ -116,6 +117,7 @@ export default function ToggleFlip({
           id={id}
           checked={checked}
           onChange={handler}
+          disabled={disabled}
         />
         <input
           type="range"
@@ -123,6 +125,7 @@ export default function ToggleFlip({
           onChange={handleSetSwitchPosition}
           min={0}
           max={100}
+          disabled={disabled}
         />
         <div className='switch'>
           <div className='thumb' />

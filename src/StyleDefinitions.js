@@ -1,23 +1,18 @@
 import styled from 'styled-components'
 
 export const App = styled.div`
-background-color: #222;
+background-color: #111;
 text-align: center;
 min-height: calc(100vh - 10vw + 40px);
 width: 100vw;
 padding: calc(5vw - 20px) 0;
+> section { 
+  width: 90vw;
+  padding: 20px;
+  margin: auto;
+  > * + * { margin-top: 10px; }
+}
 > section + section { margin-top: calc(5vw - 20px); }
-`
-export const PaletteModuleWrapper = styled.section`
-display: block;
-width: 90vw;
-margin: auto;
-padding: 20px;
-background: ${props => props.hex};
-transition-property: background;
-transition-duration: 0.33s;
-transition-timing-function: initial;
-> * + * { margin-top: 10px; }
 `
 export const GradientRow = styled.div`
 display: inline-flex;
@@ -25,9 +20,9 @@ width: 100%;
 height: 100px;
 margin-bottom: ${props => props.shadeRange ? `-10px` : `0px`}
 `
-export const Icon = styled.div`
-font-family: Delve;
-font-size: 25px;
+export const ControlCluster = styled.div`
+display: flex;
+> * + * { margin-left: 2px }
 `
 export const ControlStrip = styled.div`
 display: flex;

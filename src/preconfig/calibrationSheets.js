@@ -40,71 +40,78 @@ const shadeRange = hue => ({
 })
 
 export default {
-  satLumTestAndRainbows: {
-    hues: {
-      paletteMode: 'polar',
-      list: [240, 60],
-    },
+  default: {
+    hues: [
+      { id: 0.2,
+        name: 'indigo',
+        angle: 240,
+        nameIsDerived: false,
+        hueIsDerived: false,
+        deriveHue: null },
+      { id: 0.5,
+        name: 'lime',
+        angle: 90,
+        nameIsDerived: false,
+        hueIsDerived: true,
+        deriveHue: {
+          from: 'indigo',
+          via: 'split',
+          to: 0,
+        } },
+    ],
     colors: [
-      {
-        linkFromHues: 0,
+      { id: 333,
+        hueIsLinked: true,
+        linkedToHue: 'indigo',
         hue: 240,
         sat: 255,
         lum: 0.50,
         prefer: 'sat',
+        history: {
+          marker: 0,
+          timeline: [],
+        },
         gradients: [
-          {
-            axes: [
-              {
-                attribute: 'hue',
-                from: x => x - 20,
-                to: x => x + 20,
-              },
-            ],
-            steps: tenths,
+          { steps: tenths,
             prefer: 'sat',
-          },
-          {
             axes: [
-              {
-                attribute: 'hue',
-                from: x => x - 20,
-                to: x => x + 20,
-              },
-            ],
-            steps: tenths,
+              { attribute: 'hue',
+                relative: true,
+                from: -20,
+                to: 20 },
+            ] },
+          { steps: tenths,
             prefer: 'lum',
-          },
-          {
             axes: [
-              {
-                attribute: 'lum',
+              { attribute: 'hue',
+                relative: true,
+                from: -20,
+                to: 20 },
+            ] },
+          { steps: tenths,
+            prefer: 'lum',
+            axes: [
+              { attribute: 'lum',
                 from: 0,
-                to: 1,
-              },
-            ],
-            steps: tenths,
-            prefer: 'lum',
-          },
-          {
+                to: 1 },
+            ] },
+          { steps: tenths,
+            prefer: 'sat',
             axes: [
-              {
-                attribute: 'sat',
+              { attribute: 'sat',
                 to: 255,
-                from: 0,
-              },
-            ],
-            steps: tenths,
-            prefer: 'sat',
-          },
-        ],
-      },
-      /*
-      {
-        linkFromHues: 0,
+                from: 0 },
+            ] },
+        ] },
+      { hueIsLinked: false,
+        linkedToHue: null,
         hue: 215,
         sat: 0,
         lum: 0,
+        history: {
+          marker: 0,
+          timeline: [],
+        },
         gradients: [
           hueRange(0, 60),
           hueRange(30, 90),
@@ -118,14 +125,16 @@ export default {
           hueRange(270, 330),
           hueRange(300, 360),
           hueRange(330, 390),
-        ],
-      },
-
-      {
-        linkFromHues: 0,
+        ] },
+      { hueIsLinked: false,
+        linkedToHue: null,
         hue: 0,
         sat: 0,
         lum: 0,
+        history: {
+          marker: 0,
+          timeline: [],
+        },
         gradients: [
           shadeRange(10),
           shadeRange(20),
@@ -139,9 +148,7 @@ export default {
           shadeRange(260),
           shadeRange(290),
           shadeRange(320),
-        ],
-      },
-     */
+        ] },
     ],
   },
 }
