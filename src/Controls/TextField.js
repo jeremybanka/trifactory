@@ -15,9 +15,11 @@ export default function TextField({
   valueProvided,
   validate = {},
   handler = noHandlerMessage,
+  label = 'Label',
   frontMatter,
+  gridArea = 'field',
   dimensions,
-  injectCSS,
+  cssExtra,
   undoButton,
   goButton,
   disabled,
@@ -61,23 +63,23 @@ export default function TextField({
   }
   const handleButtonPress = () => { if(valueIsReady) handler(value) }
 
-  const labelContent = 'Hexcode'
-
   return (
     <div
       className={`
-        ${enterIsHeld && 'active'}
-        ${disabled && 'disabled'}
+        interactive
+        ${enterIsHeld ? 'active' : ''}
+        ${disabled ? 'disabled' : ''}
       `}
       css={css`
         ${textFieldCSS}
-        ${injectCSS}
+        ${cssExtra}
+        grid-area: ${gridArea};
         height: ${height}px;
         width: ${width}px;
         input[type=text] {
           flex-grow: 1;
         }
-        .buttonset {
+        .buttons {
           button { 
             height: ${height - 6}px;
             width: ${height - 6}px;
@@ -85,7 +87,6 @@ export default function TextField({
             &.cancel { width: ${value === valueProvided ? 0 : height - 6}px }
             &:disabled {
               background: none;
-              opacity: 50%;
             }
           }
         }
@@ -94,7 +95,10 @@ export default function TextField({
       {frontMatter && <div className='front-matter'>
         {frontMatter}
       </div>}
-      <Label text={labelContent} />
+      {label && <Label
+        text={label.text || label}
+        place={label.place || 'above-left'}
+      />}
       <input
         type="text"
         value={value}
@@ -103,7 +107,7 @@ export default function TextField({
         onKeyUp={handleKeyUp}
         disabled={disabled}
       />
-      <div className='buttonset'>
+      <div className='buttons'>
         {undoButton && <button
           type='button'
           className='button cancel'

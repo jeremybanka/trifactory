@@ -38,7 +38,7 @@ export default function ChromaticDiagram({ hues, tuner }) {
               background-color: ${specToHex({ hue: hue.angle, sat: 255, lum: 1, prefer: 'sat', tuner })};
             }
           `}
-          key={`hueball-for-${hue.id}`}
+          key={`hueball-for-${hue.id}-${hue.hueIsDerived}`}
         >
           <div className='dot' />
         </div>

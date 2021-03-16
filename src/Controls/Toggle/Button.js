@@ -11,24 +11,25 @@ const defaultDimensions =
 
 export default function Button({
   id,
-  labelText = 'Label',
+  label = 'Label',
   toggleStateProvided,
   handler,
   layout,
   dimensions,
-  injectCSS,
+  cssExtra,
 }) {
   const { height, width, innerPad } = { ...defaultDimensions, ...dimensions }
   const autoWidth = width ? `${width}px` : 'auto'
   const innerHeight = height - innerPad
-  const cssGridTemplate = getCssGridTemplate(layout, height)
+  const cssGridTemplate = getCssGridTemplate(layout, `${height}px`)
 
   return (
     <label
       htmlFor={id}
+      className='interactive'
       css={css`
         ${checkCSS};
-        ${injectCSS};
+        ${cssExtra};
         ${cssGridTemplate};
         height: ${height}px;
         width:  ${autoWidth};
@@ -69,7 +70,7 @@ export default function Button({
         checked={toggleStateProvided}
         onChange={handler}
       />
-      <div className='title'>{labelText}</div>
+      <div className='title'>{label}</div>
       <div className='box' />
       <Icon value='check' />
     </label>

@@ -1,12 +1,14 @@
 import { css } from '@emotion/core'
 import { buttonCSS } from './button'
-import { cssInteractiveTransform } from './cssInteractiveTransform'
+import { cssInteractiveLabel } from './interactive-label'
+import { cssInteractiveTransform } from './interactive-transform'
 import { panelCSS } from './panel'
 import { resistClickCSS } from './resist-click'
 
 export const textFieldCSS = css`
   ${panelCSS};
   ${cssInteractiveTransform};
+  ${cssInteractiveLabel}
   ${resistClickCSS}
   display: flex;
   justify-content: left;
@@ -20,6 +22,7 @@ export const textFieldCSS = css`
     background: none;
     font-size: 20px;
     border: none;
+    padding: 0px;
     padding-left: 10px;
     box-shadow: 0 0 0 0px;
     outline: none;
@@ -31,6 +34,7 @@ export const textFieldCSS = css`
       color: var(--mg-color);
       background: var(--fg-color);
     }
+    > div { height: 30px; }
   }
   .front-matter {
     display: flex;
@@ -40,7 +44,7 @@ export const textFieldCSS = css`
     align-items: center;
     cursor: default;
   }
-  .buttonset {
+  .buttons {
     display: inline-flex;
     width: auto;
     flex-grow: 0;

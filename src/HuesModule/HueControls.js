@@ -2,17 +2,17 @@ import React from 'react' // eslint-disable-line
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { css, jsx } from '@emotion/core'
-import { HUE_STRUCTURES, specToHex } from 'luum'
-import { Dropdown, Panel, Slider, TextField, Toggle, Icon } from '../Controls'
-import { ControlStrip } from '../StyleDefinitions'
+import { HUE_STRUCTURES, specToHex, wrapAround } from 'luum'
+import { Dropdown, Panel, Slider, TextField, Toggle, Icon, ControlGroup } from '../Controls'
+import { ControlCluster } from '../StyleDefinitions'
 
 export default function HueControls({
   hue,
   hues,
   hueIdx,
+  changeHue,
   addHue,
   deleteHue,
-  applyChangesToHues,
   tuner,
 }) {
   const { name, angle, deriveHue, hueIsDerived, nameIsDerived } = hue
@@ -24,7 +24,7 @@ export default function HueControls({
       &&
       attempt.length !== 0,
   }
-  const saveThisHue = content => applyChangesToHues([{ targetIdx: hueIdx, content }])
+  const saveThisHue = content => changeHue({ targetIdx: hueIdx, content })
 
   const toggleHueIsDerived = () => {
     let newDeriveHue = { ...deriveHue }
@@ -50,13 +50,19 @@ export default function HueControls({
   }
 
   return (
-    <ControlStrip>
+    <ControlGroup
+      gap={2}
+      gridTemplate='
+          [row1-start] "view  tdn  field drops tdh  slider action" auto [row1-end]
+          /             0fr   0fr  0fr   0fr   0fr   1fr   0fr'
+    >
       {name
         ? (
           <>
             <div
               key={`hue-${hueIdx}`}
               css={css`
+                  grid-area: view;
                   width: 36px;
                   height: 36px;
                   background: ${specToHex(
@@ -66,82 +72,94 @@ export default function HueControls({
             <Toggle
               handler={toggleNameIsDerived}
               toggleStateProvided={nameIsDerived}
+              gridArea='tdn'
               type='key'
-              icon='go'
+              icon='auto'
+              label='autoname ON'
             />
             <TextField
-              id={hueIdx}
-              handler={name => saveThisHue({ name })}
+              label='Name'
               valueProvided={name}
               validate={validate}
+              handler={name => saveThisHue({ name })}
+              disabled={nameIsDerived}
               goButton
               undoButton
-              disabled={nameIsDerived}
             />
             <Toggle
               disabled={hueIdx === 0}
-              type='switch'
+              type='key'
+              label={{ text: 'Derive Hue' }}
               dimensions={{ height: 36, trackWidth: 48 }}
+              gridArea='tdh'
               handler={toggleHueIsDerived}
               toggleStateProvided={hueIsDerived}
+              icon='auto'
             />
-            {hueIsDerived
-              ? (
-                <>
-                  <Dropdown
-                    labelText='Source'
-                    valueProvided={hue.deriveHue?.from}
-                    dimensions={{ width: 100 }}
-                    handler={from => adjustDeriveHue({ from })}
-                    options={linkHueOptions.map(hue =>
-                      ({ value: hue.name, label: hue.name })
-                    )}
-                  />
-                  <Dropdown
-                    labelText='Relation'
-                    valueProvided={hue.deriveHue?.via}
-                    dimensions={{ width: 100 }}
-                    handler={via => adjustDeriveHue({ via })}
-                    options={Object.keys(HUE_STRUCTURES).slice(1).map(structure => (
-                      { value: structure, label: structure }
-                    ))}
-                  />
-                  <Dropdown
-                    labelText='Transformation'
-                    valueProvided={hue.deriveHue?.to}
-                    dimensions={{ width: 100 }}
-                    handler={to => adjustDeriveHue({ to })}
-                    options={HUE_STRUCTURES[hue.deriveHue?.via].map((structure, idx) => (
-                      { value: idx, label: structure }
-                    ))}
-                  />
-                </>
-              ) : ( // no hue from
-                <Slider
-                  dimensions={{ rangeWidth: 188 }}
-                  labelText="Hue"
-                  handler={angle => saveThisHue({ angle })}
-                  valueProvided={angle}
-                  range={[0, 360]}
-                  numeric
-                />
-              )
-            }
+            <ControlCluster gridArea='drops'>
+              <Dropdown
+                label='Derive From'
+                valueProvided={hue.deriveHue?.from}
+                dimensions={{ width: 100 }}
+                handler={from => adjustDeriveHue({ from })}
+                disabled={!hueIsDerived}
+                options={linkHueOptions.map(hue =>
+                  ({ value: hue.name, label: hue.name })
+                )}
+              />
+              <Dropdown
+                label='Derive Via'
+                valueProvided={hue.deriveHue?.via}
+                dimensions={{ width: 100 }}
+                handler={via => adjustDeriveHue({ via })}
+                disabled={!hueIsDerived}
+                options={hue.deriveHue?.from
+                  ? Object.keys(HUE_STRUCTURES).slice(1).map(structure => (
+                    { value: structure, label: structure }
+                  ))
+                  : []
+              }
+              />
+              <Dropdown
+                label='Derive To'
+                valueProvided={hue.deriveHue?.to}
+                dimensions={{ width: 100 }}
+                handler={to => adjustDeriveHue({ to })}
+                disabled={!hueIsDerived}
+                options={hue.deriveHue?.via
+                  ? HUE_STRUCTURES[hue.deriveHue?.via].map((structure, idx) => (
+                    { value: idx, label: (`+ ${structure}°`) }
+                  ))
+                  : []
+              }
+              />
+            </ControlCluster>
+            <Slider
+              label="Hue"
+              handler={angle => saveThisHue({ angle })}
+              disabled={hueIsDerived}
+              valueProvided={wrapAround(angle, [0, 360])}
+              range={[0, 360]}
+              numeric
+            />
             <Panel
-              onClick={(() => deleteHue(hueIdx))}
+              handler={(() => deleteHue(hueIdx))}
               dimensions={{ height: 36, width: 36 }}
+              gridArea='action'
+              label='Delete Hue'
             ><Icon value='close' /></Panel>
           </>
         ) : ( // no hue name
           <Panel
-            onClick={addHue}
+            handler={addHue}
             dimensions={{ height: 36 }}
-            label='Add Hue'
+            gridArea='action'
+            label={{ text: 'Add Hue', place: 'left' }}
           >
             <Icon value='plus' />
           </Panel>
         )
       }
-    </ControlStrip>
+    </ControlGroup>
   )
 }

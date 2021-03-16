@@ -19,7 +19,7 @@ export default function PaletteModule({
   const hex = color ? specToHex({ ...color, tuner }) : null
   return (
     <section
-      onClick={color ? null : addColor}
+      onClick={color ? null : () => addColor(hues[0])}
       className="PaletteModule"
       css={css`
         ${color ? '' : panelCSS}

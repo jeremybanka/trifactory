@@ -1,7 +1,9 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 import { checkCSS } from '../css'
+import { cssInteractiveLabel } from '../css/interactive-label'
 import { Icon } from '../Icon'
+import Label from '../Label'
 
 const defaultDimensions =
 { height: 36 }
@@ -9,20 +11,28 @@ const defaultDimensions =
 export default function Key({
   id,
   icon,
-  labelText = 'Label',
+  label = 'Label',
   toggleStateProvided,
   handler,
+  disabled,
   dimensions,
-  injectCSS,
+  gridArea = 'key',
+  cssExtra,
 }) {
   const { height } = { ...defaultDimensions, ...dimensions }
 
   return (
     <label
       htmlFor={id}
+      className={`
+        interactive
+        ${disabled ? 'disabled' : ''}
+      `}
       css={css`
         ${checkCSS};
-        ${injectCSS};
+        ${cssExtra};
+        ${cssInteractiveLabel}
+        grid-area: ${gridArea};
         height: ${height}px;
         input[type=checkbox] {
           height: ${height}px;
@@ -30,12 +40,8 @@ export default function Key({
           &.active,
           &:active, 
           &:checked { 
-            ~ .box {
-            // fill the box:
+            ~ .box { // fill the box:
             border-width: ${(height) / 2}px;
-            }
-            ~ .icon {
-              color: var(--bg-color)
             }
           }
         }
@@ -55,9 +61,14 @@ export default function Key({
         type="checkbox"
         checked={toggleStateProvided}
         onChange={handler}
+        disabled={disabled}
       />
       <div className='box' />
       <Icon value={icon} />
+      {label && <Label
+        text={label.text || label}
+        place={label.place || 'above'}
+      />}
     </label>
   )
 }

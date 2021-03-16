@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { funnel } from 'luum'
 import Label from './Label'
 import { getCssGridTemplate } from './controlStyles'
@@ -10,7 +10,7 @@ import { Icon } from './Icon'
 const defaultDimensions =
 { height: 36,
   innerPad: 3,
-  rangeWidth: 150,
+  rangeWidth: null,
   thumbWidth: 20,
   numInputWidth: 50 }
 
@@ -20,18 +20,19 @@ const numberIfString = value => {
 }
 
 export default function Slider({
-  id,
-  labelText,
+  label,
   valueProvided,
+  disabled,
   handler,
   step = 1,
   shiftStep = step * 10,
   range,
   limit = range,
+  dimensions,
+  gridArea = 'slider',
+  cssExtra,
   numeric,
   liveUpdate,
-  dimensions,
-  injectCSS,
 }) {
   const [value, setValue] = useState(funnel(valueProvided, limit))
   const [enterIsHeld, setEnterIsHeld] = useState(false)
@@ -44,22 +45,30 @@ export default function Slider({
     thumbWidth,
     numInputWidth,
   } = { ...defaultDimensions, ...dimensions }
-
-  // console.log('value', value, 'limit', limit)
+  const autoRangeWidth = rangeWidth ? `${rangeWidth}px` : 'auto'
+  const rangeRef = useRef(null)
+  const trueRangeWidth = rangeRef.current?.offsetWidth
+  const [rangeWidthState, setRangeWidthState] = useState(trueRangeWidth)
 
   const rangeTotal = range[1] - range[0]
   const limitTotal = limit[1] - limit[0]
-  const limitFraction = limitTotal / rangeTotal
+  const limitWithinRange = limitTotal / rangeTotal
   const innerHeight = height - innerPad * 2
-  const slidableSpace = rangeWidth - thumbWidth
-  const trackWidth = thumbWidth + slidableSpace * limitFraction
-  const trackDisplace = rangeWidth * limit[0] / rangeTotal
+  const slidableSpace = rangeWidthState - thumbWidth
+  const trackWidth = thumbWidth + slidableSpace * limitWithinRange
+  const trackProgress = limit[0] / rangeTotal
+  const trackDisplace = rangeWidthState * trackProgress
   const thumbProgress = (value - limit[0]) / (limitTotal || 1)
-  const thumbDisplace = thumbProgress * slidableSpace * limitFraction
+  const thumbDisplace = thumbProgress * slidableSpace * limitWithinRange
 
   useEffect(
     () => { setValue(funnel(valueProvided, limit)) },
     [valueProvided, limit]
+  )
+
+  useEffect(
+    () => setRangeWidthState(rangeRef.current?.offsetWidth),
+    [trueRangeWidth]
   )
 
   const handleSetValue = e => {
@@ -90,45 +99,55 @@ export default function Slider({
       default:
     }
   }
-
+  /*
   const layoutCSS = numeric
-    ? getCssGridTemplate('numeric-slider', height, rangeWidth, numInputWidth)
-    : getCssGridTemplate('slider', height, rangeWidth, numInputWidth)
-
+    ? getCssGridTemplate('numeric-slider', `${height}px`, autoRangeWidth, `${numInputWidth + 10}px`)
+    : getCssGridTemplate('slider', `${height}px`, autoRangeWidth, `${numInputWidth + 10}px`)
+  */
   return (
     <div
-      onMouseUp={() => handler(numberIfString(value))}
-      onTouchEnd={() => handler(numberIfString(value))}
+      onMouseUp={() => !disabled && handler(numberIfString(value))}
+      onTouchEnd={() => !disabled && handler(numberIfString(value))}
       css={css`
         ${sliderCSS}
-        ${layoutCSS}
-        ${injectCSS}
-        input[type=range] {
-          margin-left: ${trackDisplace}px;
-          width:  ${trackWidth}px;
-          height: ${height}px;
-          &::-webkit-slider-thumb { 
-            height: ${height}px;
-            width:  ${thumbWidth}px;
-          }
-          &::-moz-range-thumb { 
-            height: ${height}px;
-            width:  ${thumbWidth}px;
-          }
-        }
-        .range {
-          width:  ${rangeWidth}px;
-          height: ${innerHeight}px;
-          margin: ${innerPad}px 0;
-          .track {
-            height: ${innerHeight}px;
+        ${cssExtra}
+        --thumb-width: ${thumbWidth}px;
+        grid-area: ${gridArea};
+        flex-grow: ${rangeWidth ? 0 : 1};
+        .range-wrapper {
+          --slidable-space: calc(100% - var(--thumb-width));
+          --track-width: calc(var(--thumb-width) + var(--slidable-space) * ${limitWithinRange});
+          --track-displace: ${trackProgress * 100}%;
+          --thumb-displace: calc(${thumbProgress} * var(--slidable-space) * ${limitWithinRange});
+          input[type=range] {
             width:  ${trackWidth}px;
             margin-left: ${trackDisplace}px;
-            .thumb {
+            height: ${height}px;
+            &::-webkit-slider-thumb { 
+              height: ${height}px;
               width:  ${thumbWidth}px;
+            }
+            &::-moz-range-thumb { 
+              height: ${height}px;
+              width:  var(--thumb-width);
+            }
+          }
+          .range {
+            width:  ${autoRangeWidth};
+            height: ${innerHeight}px;
+            margin: ${innerPad}px 0;
+            .track {
+              width:  ${trackWidth}px;
+              margin-left: ${trackDisplace}px;
               height: ${innerHeight}px;
-              margin-left: ${thumbDisplace}px;
-
+              .thumb {
+                width:  ${thumbWidth}px;
+                height: ${innerHeight}px;
+                margin-left: ${thumbDisplace}px;
+                .label-wrap {              
+                  width:  ${thumbWidth}px;
+                }
+              }
             }
           }
         }
@@ -142,44 +161,57 @@ export default function Slider({
           width:  ${innerHeight}px;
         }
       `}
-      className={enterIsHeld ? 'active' : ''}
+      className={`
+        interactive
+        ${enterIsHeld ? 'active' : ''}
+        ${disabled ? 'disabled' : ''}
+      `}
     >
-      <Label text={labelText} />
-      <div className='range'>
-        <div className='track'>
-          <div className='thumb' />
-        </div>
-      </div>
-      <input
-        type="range"
-        tabIndex={-1}
-        id={id}
-        value={value}
-        onChange={handleSetValue}
-        onKeyDown={handleKeyDown}
-        onKeyUp={handleKeyUp}
-        min={Math.round(limit[0])}
-        max={Math.round(limit[1])}
-        step={step}
-      />
       <button
         type='button'
-        disabled={value === limit[0]}
+        tabIndex='-1'
+        disabled={value === limit[0] || disabled}
         onClick={() => handler(numberIfString(value) - shiftStep)}
       >
         <Icon value='minus' />
       </button>
+      <div className='range-wrapper'>
+        <div className='range' ref={rangeRef}>
+          <div className='track'>
+            <div className='thumb'>
+              {label && <Label
+                text={label.text || label}
+                place={label.place || 'above'}
+              />}
+            </div>
+          </div>
+        </div>
+        <input
+          type="range"
+          tabIndex={-1}
+          value={value}
+          disabled={disabled}
+          onChange={handleSetValue}
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
+          min={Math.round(limit[0])}
+          max={Math.round(limit[1])}
+          step={step}
+        />
+      </div>
       <button
         type='button'
-        disabled={value === limit[1]}
+        tabIndex='-1'
+        disabled={value === limit[1] || disabled}
         onClick={() => handler(numberIfString(value) + shiftStep)}
       >
         <Icon value='plus' />
       </button>
       {numeric &&
         <input
-          id={id}
           type="number"
+          inputMode="numeric"
+          disabled={disabled}
           value={Math.round(numberIfString(value))}
           onChange={handleSetValue}
           onKeyDown={handleKeyDown}

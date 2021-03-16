@@ -1,3 +1,4 @@
+import ControlGroup from './Group'
 import Dropdown from './Dropdown'
 import DropdownClassic from './DropdownClassic'
 import Icon from './Icon/Icon'
@@ -7,6 +8,7 @@ import Panel from './Panel'
 import Slider from './Slider'
 
 export {
+  ControlGroup,
   Dropdown,
   DropdownClassic,
   Icon,

@@ -1,5 +1,5 @@
 import { css } from '@emotion/core'
-import { cssInteractiveTransform } from './cssInteractiveTransform'
+import { cssInteractiveTransform } from './interactive-transform'
 import { panelCSS } from './panel'
 
 export const checkCSS = css` 
@@ -13,9 +13,35 @@ export const checkCSS = css`
     grid-area: status;
     opacity: 0;
     margin: 0px;
-    &:checked ~ .check.icon {
-      transform: scale(1);
-      opacity: 1;
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+      ~ .icon {
+        color: var(--fg-color);
+        opacity: 0.3;
+        &:hover { color: var(--fg-color); }
+      }
+      ~ .box { opacity: 0.2; }
+      &.active, &:active, &:checked {
+        ~ .icon {
+          color: var(--fg-color);
+          opacity: 0.3;
+        }
+      }
+      &.active, &:active {
+        ~ .box {
+          border-width: 0px;
+        }
+      }
+    }
+    &:checked {
+      ~ .icon {
+        color: var(--bg-color);
+        &.check {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
     }
   }
   .box, .icon, .title { 

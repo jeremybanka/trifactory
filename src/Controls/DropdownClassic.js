@@ -11,7 +11,7 @@ const defaultDimensions =
 export default function Dropdown({
   handler,
   options,
-  labelText = 'Label',
+  label = 'Label',
   valueProvided,
   dimensions,
   injectCSS,
@@ -54,7 +54,7 @@ export default function Dropdown({
           width: ${width}px;
         `}
       >
-        <Label text={labelText} />
+        <Label text={label} />
         <select
           onChange={handler}
           value={value}

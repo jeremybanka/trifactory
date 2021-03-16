@@ -1,16 +1,18 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 import { panelCSS } from './css'
-import { cssInteractiveTransform } from './css/cssInteractiveTransform'
+import { cssInteractiveLabel } from './css/interactive-label'
+import { cssInteractiveTransform } from './css/interactive-transform'
+import Label from './Label'
 
 const defaultDimensions =
 { height: 100,
   width: null }
 
 export default function Panel({
-  id,
   children,
-  onClick,
+  handler,
+  text,
   label,
   cssExtra,
   gridArea,
@@ -23,12 +25,13 @@ export default function Panel({
   return (
     <button
       type='button'
-      id={id}
-      onClick={onClick}
+      className='interactive'
+      onClick={handler}
       disabled={disabled}
       css={css`
         ${panelCSS};
         ${cssInteractiveTransform};
+        ${cssInteractiveLabel};
         ${cssExtra};
         grid-area: ${gridArea};
         height: ${height}px;
@@ -43,7 +46,13 @@ export default function Panel({
         }
       `}
     >
-      {children}{label && <div className='text'>{label}</div>}
+      {children}
+      {text && <div className='text'>{label}</div>}
+      {label &&
+        <Label
+          text={label.text || label}
+          place={label.place || 'above'}
+        />}
     </button>
   )
 }

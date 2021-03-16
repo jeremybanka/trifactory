@@ -1,5 +1,5 @@
 import { css } from '@emotion/core'
-import { cssInteractiveTransform } from './cssInteractiveTransform'
+import { cssInteractiveTransform } from './interactive-transform'
 import { panelCSS } from './panel'
 
 export const buttonCSS = css` 

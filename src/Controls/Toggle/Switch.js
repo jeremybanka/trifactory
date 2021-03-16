@@ -2,19 +2,29 @@
 import { css, jsx } from '@emotion/core'
 import { useEffect, useState } from 'react'
 import { switchCSS } from '../css'
+import Label from '../Label'
 
 const defaultDimensions =
 { height: 24,
   innerPad: 3,
   trackWidth: 36 }
 
+const defaultLabel = {
+  place: 'above',
+  text: 'Label',
+  optionA: 'OFF',
+  optionB: 'ON',
+}
+
 export default function ToggleFlip({
   id,
-  labelText,
+  text,
+  label,
   toggleStateProvided,
   handler,
-  injectCSS,
+  cssExtra,
   dimensions,
+  gridArea = 'switch',
   disabled,
 }) {
   const [checked, setChecked] = useState(toggleStateProvided)
@@ -28,6 +38,12 @@ export default function ToggleFlip({
     trackWidth,
     thumbWidth,
   } = { ...defaultDimensions, ...dimensions }
+  const {
+    text: labelText,
+    place: labelPlace,
+    optionA: labelA,
+    optionB: labelB,
+  } = { ...defaultLabel, ...label }
   const innerHeight = height - innerPad * 2
   const thumbDisplace = innerPad + (trackWidth - height) * (switchPosition / 100)
 
@@ -55,7 +71,12 @@ export default function ToggleFlip({
 
   return (
     <div
+      className={`
+        interactive
+        ${disabled ? 'disabled' : ''}
+      `}
       css={css`
+        grid-area: ${gridArea};
         display: grid;
         align-items: center;
         justify-items: center;
@@ -69,18 +90,19 @@ export default function ToggleFlip({
         }
       `}
     >
-      {labelText && <label htmlFor={id}>
-        {labelText}
+      {text && <label htmlFor={id}>
+        {text}
       </label>
       }
       <div
-        onMouseDown={handleSetInitialSwitchPosition}
-        onTouchStart={handleSetInitialSwitchPosition}
-        onMouseUp={resolveEvent}
-        onTouchEnd={resolveEvent}
+        tabIndex='0'
+        onMouseDown={disabled ? null : handleSetInitialSwitchPosition}
+        onTouchStart={disabled ? null : handleSetInitialSwitchPosition}
+        onMouseUp={disabled ? null : resolveEvent}
+        onTouchEnd={disabled ? null : resolveEvent}
         css={css`
           ${switchCSS}
-          ${injectCSS}
+          ${cssExtra}
           grid-template:
             [row1-start] "switch           " ${height}px [row1-end]
             /             ${trackWidth}px;
@@ -112,14 +134,24 @@ export default function ToggleFlip({
           }
         `}
       >
+        {label && <Label
+          text={labelText || label}
+          place={labelPlace || 'above'}
+        />}
+        <Label
+          text={checked ? labelB : labelA}
+          place={checked ? 'right' : 'left'}
+        />
         <input
           type="checkbox"
+          tabIndex='-1'
           id={id}
           checked={checked}
           onChange={handler}
           disabled={disabled}
         />
         <input
+          tabIndex='-1'
           type="range"
           value={switchPosition}
           onChange={handleSetSwitchPosition}

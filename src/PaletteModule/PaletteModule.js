@@ -11,13 +11,18 @@ import {
   specToHexFixLimit,
 } from 'luum'
 // Controls
-import { Toggle, Slider, TextField, Panel, Dropdown, Icon } from '../Controls'
+import {
+  Toggle,
+  Slider,
+  TextField,
+  Panel,
+  Dropdown,
+  Icon,
+  ControlGroup,
+} from '../Controls'
 // Structure
 import {
   GradientRow,
-  ControlStrip,
-  ControlStripSpacer,
-  PreviewArea,
   ControlCluster,
 } from '../StyleDefinitions'
 // Children
@@ -38,25 +43,11 @@ export default function PaletteModule({
   const hex = specToHex({ ...color, tuner })
   const [inputHex, setInputHex] = useState(hex.substr(1, 6))
 
-  const controlPalette = css`${scheme({
-    hexes: [hex],
-    scheme: schemes.trifactory,
-    tuner,
-  }).Control}`
-
-  const sliderDimensions = {
-    height: 36,
-    rangeWidth: 100,
-  }
-
   useEffect(() => {
     setInputHex(specToHex({ ...color, tuner }).substr(1, 6))
   }, [color, tuner])
 
   const saveThisColor = content => changeColor({ targetIdx: colorIdx, content })
-  const previewThisColor = content => changeColor({ targetIdx: colorIdx, content })
-
-  const confirmPreview = () => saveThisColor({ ...color })
 
   const importHex = value => {
     const hex = validateHex.process(`#${value}`)
@@ -71,128 +62,142 @@ export default function PaletteModule({
     const content = {}
     content[attribute] = value
     console.log(colorIdx, content)
-    previewThisColor({ ...content })
+    saveThisColor({ ...content })
   }
 
   const togglePrefer = () => {
-    const newPrefer = prefer === 'sat'
-      ? 'lum'
-      : 'sat'
-    previewThisColor({ prefer: newPrefer })
+    const newPrefer = prefer === 'sat' ? 'lum' : 'sat'
+    saveThisColor({ prefer: newPrefer })
   }
 
   const toggleHueIsLinked = () => saveThisColor({ hueIsLinked: !hueIsLinked })
 
-  const selectHueToLink = value => previewThisColor({
-    linkedToHue: value,
-    hue: hues.find(hue => hue.name === value).angle,
-  })
+  const selectHueToLink = value => saveThisColor({ linkedToHue: value })
+
+  const controlPalette = css`${scheme({
+    hexes: [hex],
+    scheme: schemes.trifactory,
+    tuner,
+  }).Control}`
+
+  const sliderDimensions = {
+    height: 36,
+  }
 
   return (
     <>
-      <PreviewArea hex={preview.hex}>
-        <Panel onClick={confirmPreview} />
+      <ControlGroup
+        gap={2}
+        gridTemplate='
+          [row1-start] "undo redo .    close" auto [row1-end]
+          /             0fr  0fr  1fr  0fr'
+      >
         <Panel
-          onClick={() => deleteColor(colorIdx)}
+          handler={(() => undoChange(colorIdx))}
+          disabled={color.history.marker === color.history.timeline.length}
+          gridArea='undo'
+          cssExtra={controlPalette}
+          dimensions={{ height: 36, width: 36 }}
+        ><Icon value='undo' /></Panel>
+        <Panel
+          handler={(() => redoChange(colorIdx))}
+          disabled={color.history.marker === 0}
+          gridArea='redo'
+          cssExtra={controlPalette}
+          dimensions={{ height: 36, width: 36 }}
+        ><Icon value='redo' /></Panel>
+        <Panel
+          handler={() => deleteColor(colorIdx)}
+          dimensions={{ height: 36, width: 36 }}
+          gridArea='close'
+          cssExtra={controlPalette}
+        ><Icon value='close' /></Panel>
+      </ControlGroup>
+      <TextField
+        valueProvided={inputHex}
+        validate={validateHex}
+        handler={importHex}
+        frontMatter='#'
+        dimensions={{ fieldWidth: 100 }}
+        cssExtra={controlPalette}
+        goButton
+        undoButton
+      />
+      <ControlGroup
+        gap={[2, 10]}
+        gridTemplate='
+          [row1-start] "linked hue" auto [row1-end]
+          [row2-start] "switch sat" auto [row2-end]
+          [row3-start] "switch lum" auto [row3-end]
+          /             0fr   1fr
+          '
+      >
+        <Slider
+          label="Hue"
+          handler={value => adjustColorSpec(value, 'hue')}
+          valueProvided={hue}
+          disabled={hueIsLinked}
+          range={[0, 360]}
+          dimensions={sliderDimensions}
+          gridArea='hue'
+          cssExtra={controlPalette}
+          numeric
         />
-      </PreviewArea>
-      <ControlStrip>
-        <ControlCluster>
-          <Panel
-            onClick={(() => undoChange(colorIdx))}
-            dimensions={{ height: 36, width: 36 }}
-            cssExtra={controlPalette}
-            disabled={color.history.marker === color.history.timeline.length}
-          ><Icon value='undo' /></Panel>
-          <Panel
-            onClick={(() => redoChange(colorIdx))}
-            dimensions={{ height: 36, width: 36 }}
-            cssExtra={controlPalette}
-            disabled={color.history.marker === 0}
-          ><Icon value='redo' /></Panel>
-        </ControlCluster>
-
-        <TextField
-          valueProvided={inputHex}
-          validate={validateHex}
-          handler={importHex}
-          frontMatter='#'
-          dimensions={{ fieldWidth: 100 }}
-          injectCSS={controlPalette}
-          goButton
-          undoButton
-        />
-        <ControlStripSpacer />
-        <Toggle
-          type='switch'
-          dimensions={{ height: 36, trackWidth: 48 }}
-          handler={toggleHueIsLinked}
-          toggleStateProvided={hueIsLinked}
-          injectCSS={controlPalette}
-        />
-        {hueIsLinked
-          ? <>
-            <Dropdown
-              labelText='Source'
-              valueProvided={linkedToHue}
-              dimensions={{ width: 100 }}
-              handler={selectHueToLink}
-              options={hues.map(hue =>
+        <ControlCluster gridArea='linked'>
+          <Dropdown
+            label='Source'
+            valueProvided={linkedToHue}
+            handler={selectHueToLink}
+            dimensions={{ width: 100 }}
+            options={[
+              { value: null, label: '--' },
+              ...hues.map(hue =>
                 ({ value: hue.name, label: hue.name })
-              )}
-              injectCSS={controlPalette}
-            />
-          </>
-          : <Slider
-              labelText="Hue"
-              handler={value => adjustColorSpec(value, 'hue')}
-              valueProvided={hue}
-              range={[0, 360]}
-              dimensions={sliderDimensions}
-              injectCSS={controlPalette}
-              numeric
+              )]}
+            cssExtra={controlPalette}
           />
-        }
+          <Toggle
+            type='key'
+            icon='auto'
+            dimensions={{ height: 36, trackWidth: 48 }}
+            handler={toggleHueIsLinked}
+            disabled={linkedToHue === null}
+            toggleStateProvided={hueIsLinked}
+            cssExtra={controlPalette}
+          />
+        </ControlCluster>
         <Slider
           numeric
-          labelText="Saturation"
+          label="Saturation"
           handler={value => adjustColorSpec(value, 'sat')}
           valueProvided={sat}
           range={[0, 255]}
           limit={preview.limit.sat}
           dimensions={sliderDimensions}
-          injectCSS={controlPalette}
-
+          gridArea='sat'
+          cssExtra={controlPalette}
+        />
+        <Toggle
+          id={`prefer-color-${colorIdx}-flip`}
+          type='switch'
+          label={{ text: 'Prefer', optionA: 'Saturation', optionB: 'Luminosity' }}
+          dimensions={{ height: 36, trackWidth: 48 }}
+          handler={togglePrefer}
+          toggleStateProvided={prefer === 'lum'}
+          cssExtra={controlPalette}
         />
         <Slider
-          labelText="Luminosity"
+          label="Luminosity"
           handler={value => adjustColorSpec(value, 'lum')}
           valueProvided={(lum * 100)}
           range={[0, 100]}
           limit={preview.limit.lum.map(lum => lum * 100)}
           dimensions={sliderDimensions}
-          injectCSS={controlPalette}
+          gridArea='lum'
+          cssExtra={controlPalette}
           numeric
         />
-        <Toggle
-          id={`prefer-color-${colorIdx}`}
-          labelText='Prefer Sat.'
-          handler={togglePrefer}
-          toggleStateProvided={prefer === 'sat'}
-          injectCSS={controlPalette}
-          layout='title-left'
-        />
-      </ControlStrip>
-      <ControlStrip>
-        <ControlStripSpacer />
-        <Toggle
-          id={`prefer-color-${colorIdx}-flip`}
-          type='switch'
-          handler={togglePrefer}
-          toggleStateProvided={prefer === 'sat'}
-          injectCSS={controlPalette}
-        />
-      </ControlStrip>
+      </ControlGroup>
       {gradientsToHexArrays(color, tuner).map((hexArray, hexArrayIdx) =>
         <GradientRow
           key={`Color-${colorIdx}-hexGroup-${hexArrayIdx}`}

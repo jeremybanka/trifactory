@@ -1,6 +1,7 @@
 import { css } from '@emotion/core'
 import { buttonCSS } from './button'
-import { cssInteractiveTransform } from './cssInteractiveTransform'
+import { cssInteractiveLabel } from './interactive-label'
+import { cssInteractiveTransform } from './interactive-transform'
 import { panelCSS } from './panel'
 
 export const dropdownCSS = css`
@@ -39,6 +40,7 @@ display: flex;
 > .select {
   ${panelCSS};
   ${cssInteractiveTransform};
+  ${cssInteractiveLabel}
   background: none;
   display: inline-flex;
   position: absolute;
@@ -55,6 +57,7 @@ display: flex;
         padding-left: 10px;
         padding-right: 36px;
         background-color: var(--bg-color);
+        white-space: nowrap;
         //opacity: .88;
       }
     }
@@ -62,15 +65,6 @@ display: flex;
   &::-ms-expand {
     display: none;
   }
-  &:hover,
-  &.focus,
-  &:focus,
-  &:focus-within {
-    overflow: visible;
-    label {
-      transform: translateY(-15px) scaleY(1);
-      opacity: 1;
-    }
-  }
+
 }
 `

@@ -25,6 +25,7 @@ export const panelCSS = css`
   &:focus-within {
     box-shadow: 0 0px 0px 2px var(--fg-color);
     outline: none;
+    z-index: 1000;
   }
   &:active, 
   &.active {
@@ -39,7 +40,7 @@ export const panelCSS = css`
     &.focus,
     &:focus,
     &:focus-within {
-    box-shadow: 0 0px 0px 2px var(--bg-color);
+    box-shadow: none; // 0 0px 0px 2px var(--bg-color);
     outline: none;
     }
   }

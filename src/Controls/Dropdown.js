@@ -2,21 +2,22 @@ import { useEffect, useState } from 'react'
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core' // eslint-disable-line
 import { wrapAround } from 'luum'
-import Label from './Label'
 import { dropdownCSS } from './css'
 import { Icon } from './Icon'
+import Label from './Label'
 
 const defaultDimensions =
 { height: 36,
   width: null }
 
 export default function Dropdown({
-  handler,
+  label = 'Label',
+  handler = console.log(`no setter passed to colorPicker ${label}`),
   options,
-  labelText = 'Label',
+  disabled = options.length === 0,
   valueProvided,
   dimensions,
-  injectCSS,
+  cssExtra,
 }) {
   const indexOfValue = (value, options) => {
     const option = options.find(option => option.value === value)
@@ -31,9 +32,9 @@ export default function Dropdown({
   const [enterIsHeld, setEnterIsHeld] = useState(false)
 
   useEffect(() => {
-    const index = indexOfValue(valueProvided, options)
+    const index = indexOfValueProvided
     setFocused({ value: valueProvided, index })
-  }, [valueProvided, options])
+  }, [valueProvided, indexOfValueProvided, options])
 
   const handleClick = idx => {
     const { value } = options[idx]
@@ -76,12 +77,17 @@ export default function Dropdown({
 
   return (
     <div
+      className={`
+        interactive
+        ${disabled ? 'disabled' : ''}
+      `}
       css={css`
         ${dropdownCSS}
-        ${injectCSS}
+        ${cssExtra}
         .icon { 
           height: ${height}px;
           width:  ${height}px;
+          opacity: ${isOpen ? 0 : 1};
         }
         > .blocker {
           ${!isOpen && `pointer-events: none`}
@@ -95,14 +101,9 @@ export default function Dropdown({
           z-index: ${isOpen ? 1000 : 0};
           height: auto;
           margin-top: -${isOpen ? height * focused.index : 0}px;
-          &::after {
-            z-index: ${isOpen ? 1001 : 0};
-            transform: rotate(${isOpen ? 135 : -45}deg);
-            right: 13px;
-            top: ${isOpen ? 14 : 11}px;
-          }
           > .option-list-window {
             height: ${isOpen ? height * options.length : height}px;
+            min-height: ${height}px;
             width:  ${autoWidth};
             > .option-list {
               height: auto;
@@ -119,23 +120,39 @@ export default function Dropdown({
       `}
     >
       <div className='spaceholder'>
-        {options.map((option, idx) =>
+        {(
+          options[0] ? options : [{ label: '--' }]
+        ).map((option, idx) =>
           <div key={`spaceholder${idx}`}>{option.label}</div>
-        )}
+        )
+      }
       </div>
-      <div className='blocker' onClick={() => setIsOpen(!isOpen)} />
       <div
-        tabIndex='0'
+        className='blocker'
+        onClick={disabled ? null : () => setIsOpen(!isOpen)}
+        onTouchEnd={disabled ? null : () => setIsOpen(!isOpen)}
+      />
+      <div
+        tabIndex={disabled ? '-1' : '0'}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
-        className={enterIsHeld ? 'select active' : 'select'}
-        onClick={() => setIsOpen(!isOpen)}
+        className={`
+          select
+          ${disabled ? 'disabled' : ''}
+          ${enterIsHeld ? 'active' : ''}
+        `}
+        onClick={disabled ? null : () => setIsOpen(!isOpen)}
       >
         <Icon value='divot' />
-        <Label text={labelText} />
+        {label && <Label
+          text={label.text || label}
+          place={label.place || 'above'}
+        />}
         <div className='option-list-window'>
           <div className='option-list'>
-            {options.map((option, idx) =>
+            {(
+              options[0] ? options : [{ label: '--' }]
+            ).map((option, idx) =>
               <div
                 className={isOpen && idx === focused.index ? 'option focus' : 'option'}
                 key={idx}

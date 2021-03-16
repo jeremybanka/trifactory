@@ -4,16 +4,17 @@ import Key from './Key'
 import Switch from './Switch'
 
 export default function Toggle({
-  id,
+  type,
+  id = Math.random(),
   icon,
   disabled,
-  labelText,
+  label,
   toggleStateProvided,
   handler,
-  type,
   dimensions,
   layout,
-  injectCSS,
+  gridArea,
+  cssExtra,
 }) {
   switch(type) {
     case 'key': return (
@@ -21,36 +22,39 @@ export default function Toggle({
         id={id}
         icon={icon}
         disabled={disabled}
-        labelText={labelText}
+        label={label}
         toggleStateProvided={toggleStateProvided}
         handler={handler}
         dimensions={dimensions}
         layout={layout}
-        injectCSS={injectCSS}
+        gridArea={gridArea}
+        cssExtra={cssExtra}
       />
     )
     case 'switch': return (
       <Switch
         id={id}
         disabled={disabled}
-        labelText={labelText}
+        label={label}
         toggleStateProvided={toggleStateProvided}
         handler={handler}
         dimensions={dimensions}
         layout={layout}
-        injectCSS={injectCSS}
+        gridArea={gridArea}
+        cssExtra={cssExtra}
       />
     )
     default: return (
       <Button
         id={id}
         disabled={disabled}
-        labelText={labelText}
+        label={label}
         toggleStateProvided={toggleStateProvided}
         handler={handler}
         dimensions={dimensions}
         layout={layout}
-        injectCSS={injectCSS}
+        gridArea={gridArea}
+        cssExtra={cssExtra}
       />
     )
   }

@@ -53,11 +53,11 @@ export default function useHistory(defaultValue = '') {
   const undoChange = () => traverseTimeline('undo')
   const redoChange = () => traverseTimeline('redo')
   const changeState = {
-    make: makeChange,
+    with: makeChange,
     undo: undoChange,
     redo: redoChange,
     cannotUndo: marker === 0,
     cannotRedo: marker === timeline.length,
   }
-  return [state, setState, changeState]
+  return [state, changeState]
 }
