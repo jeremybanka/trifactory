@@ -50,7 +50,7 @@ export default function Application() {
   )
 
   return (
-    <HashRouter>
+    <HashRouter basename="logic">
       <DemoSelect>
         <ul>
           <li>
