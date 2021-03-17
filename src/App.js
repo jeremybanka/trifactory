@@ -62,10 +62,10 @@ export default function Application() {
         </ul>
       </DemoSelect>
       <Switch>
-        <Route exact path="/">
+        <Route exact path="/#">
           <TilesDemo colors={colors} setColors={setColors} tuner={tuner} />
         </Route>
-        <Route path="/logic">
+        <Route path="/#logic">
           <ColorLogicDemo>
             <HueModule
               hues={hues}
