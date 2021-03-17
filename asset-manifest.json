@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.df7cc6a2.chunk.css",
+    "main.js": "/static/js/main.ecc0e2b5.chunk.js",
+    "main.js.map": "/static/js/main.ecc0e2b5.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.91e13b79.js",
+    "runtime-main.js.map": "/static/js/runtime-main.91e13b79.js.map",
+    "static/js/2.54e1bdf0.chunk.js": "/static/js/2.54e1bdf0.chunk.js",
+    "static/js/2.54e1bdf0.chunk.js.map": "/static/js/2.54e1bdf0.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.e8dd8aec7a8907b091814dffe0b7bb91.js": "/precache-manifest.e8dd8aec7a8907b091814dffe0b7bb91.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.df7cc6a2.chunk.css.map": "/static/css/main.df7cc6a2.chunk.css.map",
+    "static/js/2.54e1bdf0.chunk.js.LICENSE.txt": "/static/js/2.54e1bdf0.chunk.js.LICENSE.txt",
+    "static/media/font-face.css": "/static/media/Theia-500.3668f938.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.91e13b79.js",
+    "static/js/2.54e1bdf0.chunk.js",
+    "static/css/main.df7cc6a2.chunk.css",
+    "static/js/main.ecc0e2b5.chunk.js"
+  ]
+}
