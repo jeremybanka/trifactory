@@ -20,7 +20,7 @@ import calibrationSheets from "./preconfig/calibrationSheets"
 import useLocalStorageState from "./util/useLocalStorageState"
 import HueModule from "./HuesModule"
 
-localStorage.clear()
+// localStorage.clear()
 
 export default function Application() {
   const tuner = builtInTunerKit.simulateCMYK
@@ -50,7 +50,7 @@ export default function Application() {
   )
 
   return (
-    <HashRouter basename="logic">
+    <HashRouter basename="/">
       <DemoSelect>
         <ul>
           <li>
@@ -62,10 +62,10 @@ export default function Application() {
         </ul>
       </DemoSelect>
       <Switch>
-        <Route exact path="/#">
+        <Route exact path="/">
           <TilesDemo colors={colors} setColors={setColors} tuner={tuner} />
         </Route>
-        <Route path="/#logic">
+        <Route path="/logic">
           <ColorLogicDemo>
             <HueModule
               hues={hues}
