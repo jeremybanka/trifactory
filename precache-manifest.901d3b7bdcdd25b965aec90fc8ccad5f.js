@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "571ecc77e373d2fa9dc4faec5e3640b8",
+    "revision": "bc6b9ac38e63ca79aae2bda34d8780ff",
     "url": "/trifactory/index.html"
   },
   {
-    "revision": "da67581ca11fe13e3809",
+    "revision": "cb0b64276da011659193",
     "url": "/trifactory/static/css/main.6225dd22.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/trifactory/static/js/2.4a15063a.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "da67581ca11fe13e3809",
-    "url": "/trifactory/static/js/main.2c0e25f7.chunk.js"
+    "revision": "cb0b64276da011659193",
+    "url": "/trifactory/static/js/main.f3d029c4.chunk.js"
   },
   {
     "revision": "53cfe1e8d5200a0ffdc0",
