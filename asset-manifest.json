@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/trifactory/static/css/main.6225dd22.chunk.css",
-    "main.js": "/trifactory/static/js/main.4ee1e7b9.chunk.js",
-    "main.js.map": "/trifactory/static/js/main.4ee1e7b9.chunk.js.map",
+    "main.js": "/trifactory/static/js/main.38edd032.chunk.js",
+    "main.js.map": "/trifactory/static/js/main.38edd032.chunk.js.map",
     "runtime-main.js": "/trifactory/static/js/runtime-main.739be5a7.js",
     "runtime-main.js.map": "/trifactory/static/js/runtime-main.739be5a7.js.map",
     "static/js/2.4a15063a.chunk.js": "/trifactory/static/js/2.4a15063a.chunk.js",
     "static/js/2.4a15063a.chunk.js.map": "/trifactory/static/js/2.4a15063a.chunk.js.map",
     "index.html": "/trifactory/index.html",
-    "precache-manifest.702f413db5811acebdcd6867f3c3e083.js": "/trifactory/precache-manifest.702f413db5811acebdcd6867f3c3e083.js",
+    "precache-manifest.b39a61e4fbebea522f7a728786f62350.js": "/trifactory/precache-manifest.b39a61e4fbebea522f7a728786f62350.js",
     "service-worker.js": "/trifactory/service-worker.js",
     "static/css/main.6225dd22.chunk.css.map": "/trifactory/static/css/main.6225dd22.chunk.css.map",
     "static/js/2.4a15063a.chunk.js.LICENSE.txt": "/trifactory/static/js/2.4a15063a.chunk.js.LICENSE.txt",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.739be5a7.js",
     "static/js/2.4a15063a.chunk.js",
     "static/css/main.6225dd22.chunk.css",
-    "static/js/main.4ee1e7b9.chunk.js"
+    "static/js/main.38edd032.chunk.js"
   ]
 }
